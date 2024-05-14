@@ -1,0 +1,50 @@
+{% extends "proj/layout.html" %}
+
+{% block title %}Register - Finsages{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.4/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+        <h2 class="text-2xl text-gray-800 font-bold mb-6">Register</h2>
+        <form action="{% url 'register' %}" method="post" class="space-y-6">
+            {% csrf_token %}
+            <div>
+                <input class="form-control block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" type="text" name="username" placeholder="Username" required autocomplete="off">
+            </div>
+            <div>
+                <input class="form-control block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" type="email" name="email" placeholder="Email Address" autocomplete="off">
+            </div>
+            <div>
+                <input class="form-control block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" type="password" name="password" placeholder="Password">
+            </div>
+            <div>
+                <input class="form-control block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" type="password" name="confirmation" placeholder="Confirm Password">
+            </div>
+            <div>
+                <select class="form-control block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" name="country">
+                    <option value="" disabled selected>Select Country</option>
+                    <option value="US">United States</option>
+                    <option value="IN">India</option>
+                    <option value="DE">Germany</option>
+                    <option value="GB">United Kingdom</option>
+                    <option value="JP">Japan</option>
+                    <option value="BR">Brazil</option>
+                </select>
+            </div>
+            <input class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline cursor-pointer" type="submit" value="Register">
+        </form>
+        <p class="text-sm text-center text-gray-600 mt-4">
+            Already have an account? <a href="{% url 'login' %}" class="text-blue-500 hover:text-blue-800">Log In here.</a>
+        </p>
+    </div>
+</body>
+{% endblock %}
+</html>
