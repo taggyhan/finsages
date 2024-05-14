@@ -3,9 +3,6 @@ Prerequisites
 
 Ensure you have Python and pip installed on your machine. You can verify your installation by running:
 
-bash
-
-Copy code
 
 `python --version
 pip --version`
@@ -19,9 +16,7 @@ Using a virtual environment is recommended to manage the project dependencies se
 
 If you do not have `virtualenv` installed, you can install it using pip:
 
-bash
 
-Copy code
 
 `pip install virtualenv`
 
@@ -29,9 +24,7 @@ Copy code
 
 Navigate to your project directory and create a new virtual environment:
 
-bash
 
-Copy code
 
 `virtualenv venv`
 
@@ -39,17 +32,10 @@ Activate the virtual environment:
 
 -   On Windows:
 
-    bash
-
-    Copy code
-
     `venv\Scripts\activate`
 
 -   On macOS and Linux:
 
-    bash
-
-    Copy code
 
     `source venv/bin/activate`
 
@@ -58,9 +44,6 @@ Install Dependencies
 
 With the virtual environment activated, install the project dependencies from the `requirements.txt` file:
 
-bash
-
-Copy code
 
 `pip install -r requirements.txt`
 
@@ -82,17 +65,11 @@ Running the Django Server
 
 To start the Django development server, execute:
 
-bash
 
-Copy code
 
 `python manage.py runserver`
 
 This command starts the server on the default port `8000`. If you want to use a different port:
-
-bash
-
-Copy code
 
 `python manage.py runserver 8080`
 
