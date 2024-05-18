@@ -1,2 +1,8 @@
+asgiref==3.7.2
+Django==3.2.25
+django-widget-tweaks==1.4.12
+pip==24.0
 pytz==2023.3.post1
-django==3.2.25
+setuptools==40.6.2
+sqlparse==0.4.4
+typing_extensions==4.7.1
