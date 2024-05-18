@@ -10,6 +10,7 @@ from .models import User,Transaction
 from django.contrib.auth.views import LogoutView
 from .forms import TransactionForm
 from django.contrib import messages
+from django.views.decorators.http import require_POST
 
  # Create your views here.
  # Dictionary mapping ISO country codes to time zones
@@ -117,14 +118,45 @@ def add_transaction(request):
 
     return render(request, 'proj/add_transaction.html', {'form': form})
 
-@login_required
+    
+
+@csrf_exempt
+@require_POST
 def delete_transaction(request, transaction_id):
-    if request.method == "POST":
-        try:
-            transaction = Transaction.objects.get(id=transaction_id, user=request.user)
-            transaction.delete()
-            return JsonResponse({"success": True})
-        except Transaction.DoesNotExist:
-            return JsonResponse({"success": False, "error": "Transaction not found."})
-    else:
-        return JsonResponse({"success": False, "error": "Invalid request"})
+    try:
+        transaction = Transaction.objects.get(id=transaction_id)
+        transaction.delete()
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+    
+@csrf_exempt
+@require_POST
+def update_transaction(request):
+    try:
+        transaction_id = request.POST.get('id')
+        date = request.POST.get('date')
+        amount = request.POST.get('amount')
+        description = request.POST.get('description')
+        
+        transaction = Transaction.objects.get(id=transaction_id)
+        transaction.date = date
+        transaction.amount = amount
+        transaction.description = description
+        transaction.save()
+        
+        return JsonResponse({
+            'success': True,
+            'transaction': {
+                'id': transaction.id,
+                'date': transaction.date,
+                'amount': transaction.amount,
+                'description': transaction.description,
+            }
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })

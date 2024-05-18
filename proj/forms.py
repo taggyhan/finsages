@@ -3,17 +3,22 @@ from django.utils import timezone
 import pytz
 from .models import Transaction, User
 
+from django import forms
+from django.utils import timezone
+import pytz
+from .models import Transaction,User
+
 class TransactionForm(forms.ModelForm):
     class Meta:
         model = Transaction
         fields = ['type', 'amount', 'description', 'date']
         widgets = {
             'type': forms.Select(attrs={'class': 'form-control'}),
-            'amount': forms.NumberInput(attrs={'class': 'form-control', 'autocomplete': 'off'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'id': 'amount-input'}),
             'description': forms.TextInput(attrs={
                 'class': 'form-control', 
                 'autocomplete': 'off', 
-                'placeholder': 'Optional'  # Set placeholder directly here
+                'placeholder': 'Optional'
             }),
             'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
         }
