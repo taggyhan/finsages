@@ -11,6 +11,18 @@ from django.contrib.auth.views import LogoutView
 from .forms import TransactionForm
 from django.contrib import messages
 from django.views.decorators.http import require_POST
+from django.utils import timezone
+from datetime import timedelta
+import json
+from django.db.models.functions import TruncMonth 
+from django.db.models import Sum, Q
+from decimal import Decimal
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return float(obj)
+        return super(DecimalEncoder, self).default(obj)
 
  # Create your views here.
  # Dictionary mapping ISO country codes to time zones
@@ -91,17 +103,53 @@ def register(request):
     else:
         return render(request, "proj/register.html")
     
+
+
 @login_required
 def list_transactions(request):
     transactions = Transaction.objects.filter(user=request.user).order_by('-date')
-    # Assuming `country` is a field on the user model:
     country_code = request.user.country
     currency_symbol = COUNTRY_TO_CURRENCY_SYMBOL.get(country_code, '$')  # Default to USD if not found
+
+    # Calculate the date six months ago
+    six_months_ago = timezone.now().date() - timedelta(days=180)
+
+    # Filter and aggregate transactions from the last six months, grouping by month, specific to the user
+    aggregate_transactions = Transaction.objects.filter(user=request.user, date__gte=six_months_ago).annotate(
+        month=TruncMonth('date')  # Correct usage
+    ).values('month').annotate(
+        total_inflow=Sum('amount', filter=Q(type='inflow')),
+        total_outflow=Sum('amount', filter=Q(type='outflow'))
+    ).order_by('month')
+    
+    # Prepare data for the chart
+    months = [trans['month'].strftime("%Y-%m") for trans in aggregate_transactions]
+    inflows = [float(trans['total_inflow'] or 0) for trans in aggregate_transactions]
+    outflows = [float(trans['total_outflow'] or 0) for trans in aggregate_transactions]
+
+    # Convert lists to JSON for JavaScript consumption
+    chart_data = {
+        'months': json.dumps(months),
+        'inflows': json.dumps(inflows),
+        'outflows': json.dumps(outflows),
+    }
+
+    # Add to the existing context
+    chart_data = {
+    'months': months,
+    'inflows': inflows,
+    'outflows': outflows,
+}
+
     context = {
         'transactions': transactions,
-        'currency_symbol': currency_symbol
+        'currency_symbol': currency_symbol,
+        'chart_data': json.dumps(chart_data, cls=DecimalEncoder),
     }
+
     return render(request, 'proj/list.html', context)
+
+
 
 @login_required
 def add_transaction(request):
