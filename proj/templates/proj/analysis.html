@@ -1,0 +1,71 @@
+{% extends 'proj/layout.html' %}
+
+{% block title %}Transaction Analysis{% endblock %}
+
+{% block content %}
+<h1>Analysis</h1>
+
+<canvas id="transactionChart" width="400" height="200"></canvas>
+<a href="{% url 'index' %}" class="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:bg-blue-600">Back to Home</a>
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Include Luxon -->
+<script src="https://cdn.jsdelivr.net/npm/luxon@2.1.1/build/global/luxon.min.js"></script>
+<!-- Include the Chart.js Luxon adapter -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.1.0"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var ctx = document.getElementById('transactionChart').getContext('2d');
+        var chartData = {{ chart_data|safe }};
+        
+        var transactionChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartData.months,
+                datasets: [
+                    {
+                        label: 'Total Inflow',
+                        data: chartData.inflows,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true
+                    },
+                    {
+                        label: 'Total Outflow',
+                        data: chartData.outflows,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'month',
+                            tooltipFormat: 'MMM yyyy',
+                            displayFormats: {
+                                month: 'MMM yyyy'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Month'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Amount'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

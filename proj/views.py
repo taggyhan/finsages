@@ -45,6 +45,7 @@ COUNTRY_TO_CURRENCY_SYMBOL = {
     'SG': '$'        # Singapore
 }
 
+
 def index(request):
     # If no user is signed in, return to login page:
     if not request.user.is_authenticated:
@@ -104,6 +105,28 @@ def register(request):
         return render(request, "proj/register.html")
     
 
+def get_aggregate_transactions(user, start_date):
+    aggregate_transactions = Transaction.objects.filter(
+        user=user,
+        date__gte=start_date
+    ).annotate(
+        month=TruncMonth('date')
+    ).values('month').annotate(
+        total_inflow=Sum('amount', filter=Q(type='inflow')),
+        total_outflow=Sum('amount', filter=Q(type='outflow'))
+    ).order_by('month')
+    
+    months = [trans['month'].strftime("%Y-%m") for trans in aggregate_transactions]
+    inflows = [float(trans['total_inflow'] or 0) for trans in aggregate_transactions]
+    outflows = [float(trans['total_outflow'] or 0) for trans in aggregate_transactions]
+    
+    chart_data = {
+        'months': months,
+        'inflows': inflows,
+        'outflows': outflows,
+    }
+    
+    return chart_data
 
 @login_required
 def list_transactions(request):
@@ -112,35 +135,11 @@ def list_transactions(request):
     currency_symbol = COUNTRY_TO_CURRENCY_SYMBOL.get(country_code, '$')  # Default to USD if not found
 
     # Calculate the date six months ago
-    six_months_ago = timezone.now().date() - timedelta(days=180)
+    three_months_ago = timezone.now().date() - timedelta(days=90)
 
-    # Filter and aggregate transactions from the last six months, grouping by month, specific to the user
-    aggregate_transactions = Transaction.objects.filter(user=request.user, date__gte=six_months_ago).annotate(
-        month=TruncMonth('date')  # Correct usage
-    ).values('month').annotate(
-        total_inflow=Sum('amount', filter=Q(type='inflow')),
-        total_outflow=Sum('amount', filter=Q(type='outflow'))
-    ).order_by('month')
     
-    # Prepare data for the chart
-    months = [trans['month'].strftime("%Y-%m") for trans in aggregate_transactions]
-    inflows = [float(trans['total_inflow'] or 0) for trans in aggregate_transactions]
-    outflows = [float(trans['total_outflow'] or 0) for trans in aggregate_transactions]
-
-    # Convert lists to JSON for JavaScript consumption
-    chart_data = {
-        'months': json.dumps(months),
-        'inflows': json.dumps(inflows),
-        'outflows': json.dumps(outflows),
-    }
-
-    # Add to the existing context
-    chart_data = {
-    'months': months,
-    'inflows': inflows,
-    'outflows': outflows,
-}
-
+    # Get aggregate transactions for the last six months
+    chart_data = get_aggregate_transactions(request.user, three_months_ago)
     context = {
         'transactions': transactions,
         'currency_symbol': currency_symbol,
@@ -208,3 +207,17 @@ def update_transaction(request):
             'success': False,
             'error': str(e)
         })
+     
+@login_required
+def analysis(request):
+    # Calculate the date one year ago
+    one_year_ago = timezone.now().date() - timedelta(days=365)
+    
+    # Get aggregate transactions for the last year
+    chart_data = get_aggregate_transactions(request.user, one_year_ago)
+    
+    context = {
+        'chart_data': json.dumps(chart_data, cls=DecimalEncoder),
+    }
+
+    return render(request, 'proj/analysis.html', context)
