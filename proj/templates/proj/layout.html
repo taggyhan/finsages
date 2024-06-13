@@ -19,27 +19,16 @@
             background: #004d40; /* Dark teal background */
             padding: 15px 30px; /* Adjusted for larger content */
             display: flex;
-            justify-content: space-between; /* Space between elements */
             align-items: center;
             color: #ffffff;
         }
         header img {
             height: 65px; /* 30% larger */
-            margin-right: 15px; /* Adjusted spacing */
+            margin-right: 25px; /* Increased spacing */
         }
-        header .header-left {
+        header .header-text {
             display: flex;
-            align-items: center;
-        }
-        header .header-right {
-            display: flex;
-            align-items: center;
-        }
-        header .header-right a {
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 500; /* Medium weight for better visibility */
-            margin-left: 20px; /* Spacing between links */
+            flex-direction: column;
         }
         header h1 {
             font-size: 30px; /* Larger font for the title */
@@ -49,7 +38,6 @@
         .header-motto {
             font-size: 16px; /* Slightly larger motto */
             font-weight: 300;
-            margin-top: 5px; /* Small margin for spacing */
         }
         .content {
             padding: 25px; /* Increased padding for more space */
@@ -62,18 +50,10 @@
 </head>
 <body>
     <header>
-        <div class="header-left">
-            <a href="{% url 'index' %}">
-                <img src="{% static 'proj/images/finsage_logo.webp' %}" alt="Finsages Logo">
-            </a>
-            <div class="header-text">
-                <h1>Finsages</h1>
-                <span class="header-motto">Empowering your finances</span>
-            </div>
-        </div>
-        <div class="header-right">
-            <a href="{% url 'chatbot' %}">Chatbot</a>
-            <a href="{% url 'logout' %}">Logout</a>
+        <img src="{% static 'proj/images/finsage_logo.webp' %}" alt="Finsages Logo">
+        <div class="header-text">
+            <h1>Finsages</h1>
+            <span class="header-motto">Empowering your finances</span>
         </div>
     </header>
     <div class="content">
