@@ -13,5 +13,6 @@ urlpatterns = [
     path('update-transaction/', views.update_transaction, name='update_transaction'),
     path('delete-transaction/<int:transaction_id>/', views.delete_transaction, name='delete_transaction'),
     path('analysis/', views.analysis, name='analysis'),
+    path('chatbot/', views.chatbot_view, name='chatbot'),
 ]
 
