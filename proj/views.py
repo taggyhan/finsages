@@ -221,3 +221,37 @@ def analysis(request):
     }
 
     return render(request, 'proj/analysis.html', context)
+
+
+from django.shortcuts import render
+from django import forms
+import openai
+
+openai.api_key = 'to_update'  # Replace with your actual OpenAI API key
+
+class ChatForm(forms.Form):
+    message = forms.CharField(widget=forms.Textarea(attrs={"rows": 3, "cols": 50, "class": "form-control"}))
+@login_required
+def chatbot_view(request):
+    form = ChatForm()
+    user_message = None
+    bot_response = None
+
+    if request.method == "POST":
+        form = ChatForm(request.POST)
+        if form.is_valid():
+            user_message = form.cleaned_data["message"]
+            try:
+                response = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": "You are a helpful assistant."},
+                        {"role": "user", "content": user_message}
+                    ]
+                )
+                bot_response = response.choices[0].message['content']
+            except Exception as e:
+                bot_response = f"Error: {e}"
+
+    return render(request, "proj/chatbot.html", {"form": form, "user_message": user_message, "bot_response": bot_response})
+
