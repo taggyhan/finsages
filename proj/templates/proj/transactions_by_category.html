@@ -1,0 +1,20 @@
+<!-- transactions_by_category.html in your templates directory -->
+{% extends "proj/layout.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Transactions Grouped by Category</h2>
+    <ul>
+        {% for category, transactions in detailed_transactions.items %}
+        <li>
+            <strong>Category: {{ category }}</strong>
+            <ul>
+                {% for transaction in transactions %}
+                <li>{{ transaction.description }} - ${{ transaction.amount }} on {{ transaction.date }}</li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

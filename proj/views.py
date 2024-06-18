@@ -17,6 +17,11 @@ import json
 from django.db.models.functions import TruncMonth 
 from django.db.models import Sum, Q
 from decimal import Decimal
+from .ml_model import predict_category
+from django.db.models import Count
+from django import forms
+import openai
+
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -150,6 +155,7 @@ def list_transactions(request):
 
 
 
+
 @login_required
 def add_transaction(request):
     if request.method == 'POST':
@@ -157,11 +163,17 @@ def add_transaction(request):
         if form.is_valid():
             transaction = form.save(commit=False)
             transaction.user = request.user
+
+            # Use ML model to predict the category based on the description
+            description = form.cleaned_data['description']
+            predicted_category = predict_category(description)
+            transaction.category = predicted_category  # Assign the predicted category to the transaction
+
             transaction.save()
-            messages.success(request, 'Transaction added successfully!')  # Adding success message
-            return redirect('add_transaction')  # Redirect back to the same page to clear the form
+            messages.success(request, 'Transaction added successfully!')
+            return redirect('add_transaction')
     else:
-        form = TransactionForm(user=request.user)  # Initialize form with user
+        form = TransactionForm(user=request.user)
 
     return render(request, 'proj/add_transaction.html', {'form': form})
 
@@ -207,7 +219,7 @@ def update_transaction(request):
             'success': False,
             'error': str(e)
         })
-     
+    '''
 @login_required
 def analysis(request):
     # Calculate the date one year ago
@@ -216,16 +228,55 @@ def analysis(request):
     # Get aggregate transactions for the last year
     chart_data = get_aggregate_transactions(request.user, one_year_ago)
     
+    # Aggregate transactions by their 'category' and counts them
+    categories = Transaction.objects.values('category').annotate(total=Count('category')).order_by('category')
+    
+    # Retrieve detailed transactions grouped by category
+    detailed_transactions = {}
+    for category in categories:
+        detailed_transactions[category['category']] = Transaction.objects.filter(category=category['category'])
+
     context = {
         'chart_data': json.dumps(chart_data, cls=DecimalEncoder),
+        'categories': categories,
+        'detailed_transactions': detailed_transactions,
     }
 
     return render(request, 'proj/analysis.html', context)
 
+'''
+@login_required
+def analysis(request):
+    # Calculate the date one year ago
+    one_year_ago = timezone.now().date() - timedelta(days=365)
+    
+    # Get aggregate transactions for the last year
+    chart_data = get_aggregate_transactions(request.user, one_year_ago)
+    
+    # Aggregate transactions by their 'category' and sum their amounts
+    categories = Transaction.objects.values('category').annotate(total=Count('category')).order_by('category')
+    
+    # Retrieve detailed transactions grouped by category
+    detailed_transactions = {}
+    inflow_categories = {}
+    outflow_categories = {}
+    for category in categories:
+        detailed_transactions[category['category']] = Transaction.objects.filter(category=category['category'])
+        inflow_total = Transaction.objects.filter(category=category['category'], type='inflow').aggregate(Sum('amount'))['amount__sum'] or 0
+        outflow_total = Transaction.objects.filter(category=category['category'], type='outflow').aggregate(Sum('amount'))['amount__sum'] or 0
+        inflow_categories[category['category']] = inflow_total
+        outflow_categories[category['category']] = outflow_total
 
-from django.shortcuts import render
-from django import forms
-import openai
+    context = {
+        'chart_data': json.dumps(chart_data, cls=DecimalEncoder),
+        'categories': categories,
+        'detailed_transactions': detailed_transactions,
+        'inflow_categories': json.dumps(inflow_categories, cls=DecimalEncoder),
+        'outflow_categories': json.dumps(outflow_categories, cls=DecimalEncoder),
+    }
+
+    return render(request, 'proj/analysis.html', context)
+
 
 openai.api_key = 'to_update'  # Replace with your actual OpenAI API key
 
@@ -254,4 +305,3 @@ def chatbot_view(request):
                 bot_response = f"Error: {e}"
 
     return render(request, "proj/chatbot.html", {"form": form, "user_message": user_message, "bot_response": bot_response})
-
