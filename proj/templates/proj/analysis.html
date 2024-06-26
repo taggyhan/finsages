@@ -5,8 +5,24 @@
 {% block content %}
 <h1>Analysis</h1>
 
+<!-- Header for the Line Chart -->
+<h2>Transactions Over the Past Year</h2>
 <canvas id="transactionChart" width="400" height="200"></canvas>
-<a href="{% url 'index' %}" class="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:bg-blue-600">Back to Home</a>
+
+<div style="display: flex; justify-content: space-between; margin-top: 20px;">
+    <!-- Header for the Inflow Pie Chart -->
+    <div style="width: 45%;">
+        <h2>Inflow Categories (Past Year)</h2>
+        <canvas id="inflowPieChart" width="200" height="200"></canvas>
+    </div>
+    <!-- Header for the Outflow Pie Chart -->
+    <div style="width: 45%;">
+        <h2>Outflow Categories (Past Year)</h2>
+        <canvas id="outflowPieChart" width="200" height="200"></canvas>
+    </div>
+</div>
+
+
 <!-- Include Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- Include Luxon -->
@@ -64,6 +80,78 @@
                         }
                     }
                 }
+            }
+        });
+
+        // Inflow Pie Chart
+        var inflowCtx = document.getElementById('inflowPieChart').getContext('2d');
+        var inflowCategories = {{ inflow_categories|safe }};
+        var inflowLabels = Object.keys(inflowCategories);
+        var inflowData = Object.values(inflowCategories);
+
+        var inflowPieChart = new Chart(inflowCtx, {
+            type: 'pie',
+            data: {
+                labels: inflowLabels,
+                datasets: [{
+                    data: inflowData,
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+        // Outflow Pie Chart
+        var outflowCtx = document.getElementById('outflowPieChart').getContext('2d');
+        var outflowCategories = {{ outflow_categories|safe }};
+        var outflowLabels = Object.keys(outflowCategories);
+        var outflowData = Object.values(outflowCategories);
+
+        var outflowPieChart = new Chart(outflowCtx, {
+            type: 'pie',
+            data: {
+                labels: outflowLabels,
+                datasets: [{
+                    data: outflowData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
             }
         });
     });

@@ -41,12 +41,27 @@ class Transaction(models.Model):
         ('inflow', 'Inflow'),
         ('outflow', 'Outflow'),
     )
+    
+    CATEGORY_CHOICES = (
+        ('auto', 'Auto'),
+        ('baby', 'Baby'),
+        ('clothes', 'Clothes'),
+        ('electronics', 'Electronics'),
+        ('entertainment', 'Entertainment'),
+        ('food', 'Food'),
+        ('home', 'Home'),
+        ('kids', 'Kids'),  # Note: You might want to remove or handle this category differently due to having very few entries
+        ('medical', 'Medical'),
+        ('personal_care', 'Personal Care'),
+        ('pets', 'Pets'),  # Assuming you want to include Pets based on your truncated list
+    )
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="transactions")
     type = models.CharField(max_length=7, choices=TRANSACTION_TYPES)
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, blank=True, null=True)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     description = models.CharField(max_length=255, blank=True, null=True)
     date = models.DateField()
 
     def __str__(self):
-        return f"{self.type} transaction of {self.amount} on {self.date}"
+        return f"{self.type} transaction of {self.amount} in category '{self.category}' on {self.date}"
