@@ -1,0 +1,14 @@
+{
+    "version": 2,
+    "builds": [
+      { "src": "finsage/wsgi.py", "use": "@vercel/python" },
+      { "src": "build_files.sh", "use": "@vercel/bash" }
+    ],
+    "routes": [
+      { "src": "/(.*)", "dest": "finsage/wsgi.py" }
+    ],
+    "env": {
+      "DJANGO_SECRET_KEY": "@django_secret_key",
+      "DATABASE_URL": "@database_url"
+    }
+  }
