@@ -2,16 +2,32 @@ name: Django CI
 
 on:
   push:
-    branches: 
+    branches:
       - '**'  # This will match any branch
   pull_request:
-    branches: 
+    branches:
       - '**'  # This will match any branch
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:12  # Using PostgreSQL version 12
+        env:
+          POSTGRES_DB: finsages
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: 030105
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     strategy:
       max-parallel: 4
       matrix:
@@ -39,41 +55,20 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Install PostgreSQL
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y postgresql postgresql-contrib
-
-    - name: Configure PostgreSQL
-      run: |
-        sudo service postgresql start
-        sudo -u postgres psql -c "ALTER USER postgres PASSWORD '030105';"
-        sudo sed -i "s/peer/md5/g" /etc/postgresql/*/main/pg_hba.conf
-        sudo sed -i "s/ident/md5/g" /etc/postgresql/*/main/pg_hba.conf
-        sudo service postgresql restart
-
-    - name: Set up the database
-      env:
-        PGPASSWORD: 030105
-      run: |
-        sudo -u postgres psql -c "CREATE DATABASE finsages;"
-
     - name: Set environment variables
       run: |
+        echo "DJANGO_SETTINGS_MODULE=finsages.settings" >> $GITHUB_ENV
         echo "DB_NAME=finsages" >> $GITHUB_ENV
         echo "DB_USER=postgres" >> $GITHUB_ENV
         echo "DB_PASSWORD=030105" >> $GITHUB_ENV
-        echo "DB_HOST=127.0.0.1" >> $GITHUB_ENV
+        echo "DB_HOST=localhost" >> $GITHUB_ENV
         echo "DB_PORT=5432" >> $GITHUB_ENV
 
-    - name: Run Tests
-      env:
-        DJANGO_SETTINGS_MODULE: finsages.settings  # Replace with your actual settings module
-        DB_NAME: finsages
-        DB_USER: postgres
-        DB_PASSWORD: 030105
-        DB_HOST: 127.0.0.1
-        DB_PORT: 5432
+    - name: Run Migrations
       run: |
         python manage.py migrate
+
+    - name: Run Tests
+      run: |
         python manage.py test
+
