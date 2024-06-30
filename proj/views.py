@@ -13,17 +13,13 @@ from datetime import timedelta
 from decimal import Decimal
 from django.db.models.functions import TruncMonth 
 from django.db.models import Sum, Q, Count
-
 from .models import Transaction, Goal
 from .forms import TransactionForm, GoalForm, ChatForm
 from .ml_model import predict_category
-
-import openai
 import json
 from openai import OpenAI
-
 from django import forms
-
+import openai
 # Your views and logic here
 
 
@@ -170,8 +166,11 @@ def add_transaction(request):
 
             # Use ML model to predict the category based on the description
             description = form.cleaned_data['description']
-            predicted_category = predict_category(description)
-            transaction.category = predicted_category  # Assign the predicted category to the transaction
+            if description:
+                predicted_category = predict_category(description)
+                transaction.category = predicted_category  # Assign the predicted category to the transaction
+            else:
+                transaction.category = None
 
             transaction.save()
             messages.success(request, 'Transaction added successfully!')
@@ -207,6 +206,11 @@ def update_transaction(request):
         transaction.date = date
         transaction.amount = amount
         transaction.description = description
+        if description:
+            predicted_category = predict_category(description)
+            transaction.category = predicted_category  # Assign the predicted category to the transaction
+        else:
+            transaction.category = None
         transaction.save()
         
         return JsonResponse({
@@ -285,6 +289,8 @@ def analysis(request):
 openai.api_key = 'to_update'  # Replace with your actual OpenAI API key
 
 
+
+@login_required
 def create_financial_advice_prompt(user, goal):
     transactions = list(Transaction.objects.filter(user=user).values())
     inflows = [t for t in transactions if t['type'] == 'inflow']
@@ -309,6 +315,7 @@ def create_financial_advice_prompt(user, goal):
     How can I reach my goal of saving ${goal.target_amount} for {goal.name} in {goal.months_to_save} months, given my current income and expenditures?
     """
     return prompt
+
 @login_required
 def chatbot_view(request):
     user = request.user
