@@ -57,7 +57,7 @@ jobs:
 
     - name: Set environment variables
       run: |
-        echo "DJANGO_SETTINGS_MODULE=finsages.settings" >> $GITHUB_ENV
+        echo "DJANGO_SETTINGS_MODULE=finsage.settings" >> $GITHUB_ENV
         echo "DB_NAME=finsages" >> $GITHUB_ENV
         echo "DB_USER=postgres" >> $GITHUB_ENV
         echo "DB_PASSWORD=030105" >> $GITHUB_ENV
