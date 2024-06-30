@@ -20,7 +20,11 @@ import json
 from openai import OpenAI
 from django import forms
 import openai
+from django.http import HttpResponseRedirect
+from django.contrib.auth import get_user_model
+User = get_user_model()
 # Your views and logic here
+
 
 
 class DecimalEncoder(json.JSONEncoder):
