@@ -46,18 +46,29 @@ jobs:
 
     - name: Configure PostgreSQL
       run: |
-        sudo sed -i "s/peer/trust/g" /etc/postgresql/*/main/pg_hba.conf
-        sudo sed -i "s/md5/trust/g" /etc/postgresql/*/main/pg_hba.conf
+        sudo sed -i "s/peer/md5/g" /etc/postgresql/*/main/pg_hba.conf
         sudo service postgresql restart
 
     - name: Set up the database
       run: |
-        sudo -u postgres psql -c "CREATE DATABASE test_db;"
+        sudo -u postgres psql -c "CREATE DATABASE finsages;"
+
+    - name: Set environment variables
+      run: |
+        echo "DB_NAME=finsages" >> $GITHUB_ENV
+        echo "DB_USER=postgres" >> $GITHUB_ENV
+        echo "DB_PASSWORD=030105" >> $GITHUB_ENV
+        echo "DB_HOST=127.0.0.1" >> $GITHUB_ENV
+        echo "DB_PORT=5432" >> $GITHUB_ENV
 
     - name: Run Tests
       env:
-        DJANGO_SETTINGS_MODULE: your_project.settings
-        DATABASE_URL: postgres://postgres@localhost/test_db
+        DJANGO_SETTINGS_MODULE: finsages.settings  # Replace with your actual settings module
+        DB_NAME: finsages
+        DB_USER: postgres
+        DB_PASSWORD: 030105
+        DB_HOST: 127.0.0.1
+        DB_PORT: 5432
       run: |
         python manage.py migrate
         python manage.py test
