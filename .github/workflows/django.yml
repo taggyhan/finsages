@@ -46,10 +46,15 @@ jobs:
 
     - name: Configure PostgreSQL
       run: |
+        sudo service postgresql start
+        sudo -u postgres psql -c "ALTER USER postgres PASSWORD '030105';"
         sudo sed -i "s/peer/md5/g" /etc/postgresql/*/main/pg_hba.conf
+        sudo sed -i "s/ident/md5/g" /etc/postgresql/*/main/pg_hba.conf
         sudo service postgresql restart
 
     - name: Set up the database
+      env:
+        PGPASSWORD: 030105
       run: |
         sudo -u postgres psql -c "CREATE DATABASE finsages;"
 
