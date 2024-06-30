@@ -37,7 +37,7 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "DJANGO_SETTINGS_MODULE=myproject.settings" >> $GITHUB_ENV
+          echo "DJANGO_SETTINGS_MODULE=finsage.settings" >> $GITHUB_ENV
           echo "POSTGRES_USER=user" >> $GITHUB_ENV
           echo "POSTGRES_PASSWORD=password" >> $GITHUB_ENV
           echo "POSTGRES_DB=mydb" >> $GITHUB_ENV
