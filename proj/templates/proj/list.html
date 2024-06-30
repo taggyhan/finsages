@@ -202,8 +202,8 @@
         </div>
     </div>
     <!-- Include canvas element for Chart.js -->
-    <div style="max-width: 800px; margin: auto;">
-        <canvas id="transactionChart" width="400" height="200"></canvas>
+    <div style="max-width: 800px; margin: auto; height: 400px;">
+        <canvas id="transactionChart" width="800" height="400"></canvas>
     </div>
     <div class="button-container">
         <a href="{% url 'analysis' %}" class="analysis-button">View More Analysis</a>
@@ -214,7 +214,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const ctx = document.getElementById('transactionChart').getContext('2d');
             const chartData = JSON.parse('{{ chart_data|safe }}');
-
+    
             const myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -239,12 +239,13 @@
                             beginAtZero: true
                         }
                     },
-                    responsive: true,
+                    responsive: false,  // Set to false to debug the resizing issue
                     maintainAspectRatio: true  // Adjust to false if aspect ratio issues persist
                 }
             });
         });
     </script>
+    
 </body>
 </html>
 {% endblock %}
