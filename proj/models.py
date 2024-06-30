@@ -65,3 +65,12 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"{self.type} transaction of {self.amount} in category '{self.category}' on {self.date}"
+class Goal(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='goals')
+    name = models.CharField(max_length=255)
+    target_amount = models.DecimalField(max_digits=12, decimal_places=2)
+    months_to_save = models.IntegerField()
+    amount_saved = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+
+    def __str__(self):
+        return f"{self.name} - Target: {self.target_amount} - Saved: {self.amount_saved}"

@@ -1,26 +1,30 @@
-from django.shortcuts import render,redirect
-from django.http import HttpResponse,HttpResponseRedirect,JsonResponse
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.contrib.auth.models import User
-from .models import User,Transaction
-from django.contrib.auth.views import LogoutView
-from .forms import TransactionForm
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 from django.utils import timezone
 from datetime import timedelta
-import json
-from django.db.models.functions import TruncMonth 
-from django.db.models import Sum, Q
 from decimal import Decimal
+from django.db.models.functions import TruncMonth 
+from django.db.models import Sum, Q, Count
+
+from .models import Transaction, Goal
+from .forms import TransactionForm, GoalForm, ChatForm
 from .ml_model import predict_category
-from django.db.models import Count
-from django import forms
+
 import openai
+import json
+from openai import OpenAI
+
+from django import forms
+
+# Your views and logic here
 
 
 class DecimalEncoder(json.JSONEncoder):
@@ -280,28 +284,111 @@ def analysis(request):
 
 openai.api_key = 'to_update'  # Replace with your actual OpenAI API key
 
-class ChatForm(forms.Form):
-    message = forms.CharField(widget=forms.Textarea(attrs={"rows": 3, "cols": 50, "class": "form-control"}))
+
+def create_financial_advice_prompt(user, goal):
+    transactions = list(Transaction.objects.filter(user=user).values())
+    inflows = [t for t in transactions if t['type'] == 'inflow']
+    outflows = [t for t in transactions if t['type'] == 'outflow']
+
+    prompt = f"""
+    User's Financial Data:
+    
+    Inflows:
+    {json.dumps(inflows, indent=2)}
+
+    Outflows:
+    {json.dumps(outflows, indent=2)}
+
+    Savings Goal:
+    - Goal: {goal.name}
+    - Target Amount: ${goal.target_amount}
+    - Months to Save: {goal.months_to_save}
+    - Amount Saved: ${goal.amount_saved}
+
+    User's Question:
+    How can I reach my goal of saving ${goal.target_amount} for {goal.name} in {goal.months_to_save} months, given my current income and expenditures?
+    """
+    return prompt
 @login_required
 def chatbot_view(request):
-    form = ChatForm()
+    user = request.user
+    form = ChatForm(user=user)
     user_message = None
     bot_response = None
 
     if request.method == "POST":
-        form = ChatForm(request.POST)
+        form = ChatForm(request.POST, user=user)
         if form.is_valid():
             user_message = form.cleaned_data["message"]
+            selected_goal = form.cleaned_data.get("goal")
+
+            if selected_goal:
+                prompt = create_financial_advice_prompt(user, selected_goal)
+            else:
+                user_data = {
+                    "goals": list(Goal.objects.filter(user=user).values()),
+                    "transactions": list(Transaction.objects.filter(user=user).values())
+                }
+                prompt = f"Here is the user's financial data:\n{json.dumps(user_data, indent=2)}\n\n{user_message}"
+
             try:
-                response = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
-                    messages=[
-                        {"role": "system", "content": "You are a helpful assistant."},
-                        {"role": "user", "content": user_message}
-                    ]
-                )
+                client = OpenAI()
+                response = client.completions.create(
+                    prompt=[
+                        {"role": "system", "content": "You are a financial assistant."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    model="gpt-3.5-turbo-instruct",
+                    top_p=0.5, max_tokens=50,
+                    stream=True)
                 bot_response = response.choices[0].message['content']
             except Exception as e:
                 bot_response = f"Error: {e}"
 
     return render(request, "proj/chatbot.html", {"form": form, "user_message": user_message, "bot_response": bot_response})
+
+@login_required
+def goals_view(request):
+    goals = Goal.objects.filter(user=request.user)
+    return render(request, 'proj/goals.html', {'goals': goals})
+
+@login_required
+def add_goal(request):
+    if request.method == 'POST':
+        form = GoalForm(request.POST)
+        if form.is_valid():
+            goal = form.save(commit=False)
+            goal.user = request.user
+            goal.save()
+            return redirect('goals_view')
+    else:
+        form = GoalForm()
+    return render(request, 'proj/add_goal.html', {'form': form})
+
+@login_required
+def update_goal(request, goal_id):
+    goal = Goal.objects.get(id=goal_id, user=request.user)
+    if request.method == 'POST':
+        form = GoalForm(request.POST, instance=goal)
+        if form.is_valid():
+            form.save()
+            return redirect('goals_view')
+    else:
+        form = GoalForm(instance=goal)
+    return render(request, 'proj/update_goal.html', {'form': form, 'goal': goal})
+
+@login_required
+@require_POST
+def update_goal_amount(request, goal_id):
+    goal = Goal.objects.get(id=goal_id, user=request.user)
+    amount = Decimal(request.POST.get('amount'))
+    goal.amount_saved += amount
+    goal.save()
+    return redirect('goals_view')
+
+@login_required
+@require_POST
+def delete_goal(request, goal_id):
+    goal = Goal.objects.get(id=goal_id, user=request.user)
+    goal.delete()
+    return redirect('goals_view')

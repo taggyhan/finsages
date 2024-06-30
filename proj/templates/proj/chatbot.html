@@ -2,28 +2,42 @@
 
 {% block content %}
 <div class="container">
-    <h2>Chat with our AI assistant</h2>
-    <form method="post" class="chatbot-form">
+    <h2>Chatbot</h2>
+    <form method="post">
         {% csrf_token %}
         <div class="form-group">
-            <label for="id_message" class="form-label">Question:</label>
+            <label for="goal">Select a goal for advice:</label>
+            {{ form.goal }}
+        </div>
+        <div class="form-group">
+            <label for="message">Your message:</label>
             {{ form.message }}
         </div>
         <button type="submit" class="btn btn-primary">Send</button>
     </form>
 
-    {% if user_message and bot_response %}
-    <h2>Chat History</h2>
-    <div class="chat-history">
-        <p><strong>You:</strong> {{ user_message }}</p>
-        <p><strong>Assistant:</strong> {{ bot_response }}</p>
-    </div>
+    {% if user_message %}
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5 class="card-title">Your Message:</h5>
+                <p class="card-text">{{ user_message }}</p>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if bot_response %}
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5 class="card-title">Bot's Response:</h5>
+                <p class="card-text">{{ bot_response }}</p>
+            </div>
+        </div>
     {% endif %}
 </div>
 
 <style>
     .container {
-        max-width: 600px;
+        max-width: 800px;
         margin: 20px auto;
         padding: 20px;
         background-color: #f8f9fa;
@@ -38,29 +52,6 @@
     }
     .form-group {
         margin-bottom: 15px;
-    }
-    .form-control {
-        display: block;
-        width: 100%;
-        padding: 8px 10px;
-        font-size: 16px;
-        line-height: 1.5;
-        color: #495057;
-        background-color: #fff;
-        background-clip: padding-box;
-        border: 2px solid #ced4da;
-        border-radius: 0.3rem;
-        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-    }
-    .form-control:focus {
-        border-color: #80bdff;
-        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-    }
-    .form-label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 500;
-        color: #343a40;
     }
     .btn {
         padding: 10px 15px;
@@ -77,18 +68,8 @@
     .btn-primary:hover {
         background-color: #0056b3;
     }
-    .chat-history {
+    .card {
         margin-top: 20px;
-        padding: 15px;
-        background-color: #e9ecef;
-        border-radius: 0.25rem;
-    }
-    .chat-history p {
-        margin: 0;
-        padding: 5px 0;
-    }
-    .chat-history p strong {
-        color: #007bff;
     }
 </style>
 {% endblock %}
