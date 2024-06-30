@@ -39,16 +39,25 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Install PostgreSQL
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y postgresql postgresql-contrib
+
+    - name: Configure PostgreSQL
+      run: |
+        sudo sed -i "s/peer/trust/g" /etc/postgresql/*/main/pg_hba.conf
+        sudo sed -i "s/md5/trust/g" /etc/postgresql/*/main/pg_hba.conf
+        sudo service postgresql restart
+
     - name: Set up the database
       run: |
-        sudo apt-get install postgresql postgresql-contrib
-        sudo service postgresql start
-        psql -U postgres -c "CREATE DATABASE test_db;"
+        sudo -u postgres psql -c "CREATE DATABASE test_db;"
 
     - name: Run Tests
       env:
         DJANGO_SETTINGS_MODULE: your_project.settings
-        DATABASE_URL: postgres://postgres:@localhost/test_db
+        DATABASE_URL: postgres://postgres@localhost/test_db
       run: |
         python manage.py migrate
         python manage.py test
