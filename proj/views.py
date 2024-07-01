@@ -21,8 +21,9 @@ from openai import OpenAI
 from django import forms
 import openai
 # Your views and logic here
-
-
+from django.http import HttpResponseRedirect
+from django.contrib.auth import get_user_model
+User = get_user_model()
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Decimal):
@@ -107,9 +108,9 @@ def register(request):
                 "message": "Username or email address already taken. Please try a different one."
             })
     else:
-        return render(request, "proj/register.html")
-    
+        return render(request, 'proj/register.html')
 
+    
 def get_aggregate_transactions(user, start_date):
     aggregate_transactions = Transaction.objects.filter(
         user=user,
