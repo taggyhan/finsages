@@ -20,7 +20,12 @@ import json
 from openai import OpenAI
 from django import forms
 import openai
+from django.http import HttpResponseRedirect
+from django.contrib.auth import get_user_model
+from decimal import Decimal
+User = get_user_model()
 # Your views and logic here
+
 
 
 class DecimalEncoder(json.JSONEncoder):
@@ -286,11 +291,13 @@ def analysis(request):
     return render(request, 'proj/analysis.html', context)
 
 
-openai.api_key = 'to_update'  # Replace with your actual OpenAI API key
+openai.api_key = ("update_with_API_key")  # Replace with your actual OpenAI API key
 
 
-
-@login_required
+def decimal_default(obj):
+    if isinstance(obj, Decimal):
+        return float(obj)
+#@login_required
 def create_financial_advice_prompt(user, goal):
     transactions = list(Transaction.objects.filter(user=user).values())
     inflows = [t for t in transactions if t['type'] == 'inflow']
@@ -300,10 +307,10 @@ def create_financial_advice_prompt(user, goal):
     User's Financial Data:
     
     Inflows:
-    {json.dumps(inflows, indent=2)}
+    {json.dumps(inflows, indent=2, default=decimal_default)}
 
     Outflows:
-    {json.dumps(outflows, indent=2)}
+    {json.dumps(outflows, indent=2, default=decimal_default)}
 
     Savings Goal:
     - Goal: {goal.name}
@@ -322,7 +329,6 @@ def chatbot_view(request):
     form = ChatForm(user=user)
     user_message = None
     bot_response = None
-
     if request.method == "POST":
         form = ChatForm(request.POST, user=user)
         if form.is_valid():
@@ -337,18 +343,19 @@ def chatbot_view(request):
                     "transactions": list(Transaction.objects.filter(user=user).values())
                 }
                 prompt = f"Here is the user's financial data:\n{json.dumps(user_data, indent=2)}\n\n{user_message}"
+                print(prompt)
 
             try:
                 client = OpenAI()
-                response = client.completions.create(
-                    prompt=[
+                response = client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
                         {"role": "system", "content": "You are a financial assistant."},
                         {"role": "user", "content": prompt}
-                    ],
-                    model="gpt-3.5-turbo-instruct",
-                    top_p=0.5, max_tokens=50,
-                    stream=True)
-                bot_response = response.choices[0].message['content']
+                    ],  
+                    temperature=0,
+                    )
+                bot_response = response.choices[0].message.content
             except Exception as e:
                 bot_response = f"Error: {e}"
 
