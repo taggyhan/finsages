@@ -1,18 +1,70 @@
-{% extends "proj/layout.html" %}
-
-{% block title %}Login - Finsages{% endblock %}
-
-{% block content %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login - Finsages</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.4/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            font-size: 18px; /* Increased base font size */
+        }
+        header {
+            background: #004d40; /* Dark teal background */
+            padding: 15px 30px; /* Adjusted for larger content */
+            display: flex;
+            justify-content: space-between; /* Space between elements */
+            align-items: center;
+            color: #ffffff;
+        }
+        header img {
+            height: 65px; /* 30% larger */
+            margin-right: 15px; /* Adjusted spacing */
+        }
+        header .header-left {
+            display: flex;
+            align-items: center;
+        }
+        header h1 {
+            font-size: 30px; /* Larger font for the title */
+            font-weight: 700; /* Bolder for better visibility */
+            margin: 0;
+        }
+        .header-motto {
+            font-size: 16px; /* Slightly larger motto */
+            font-weight: 300;
+            margin-top: 5px; /* Small margin for spacing */
+        }
+        .content {
+            padding: 25px; /* Increased padding for more space */
+            margin-top: 25px; /* Increased margin for aesthetic spacing */
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+        }
+    </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center h-screen">
-    <div class="w-full max-w-xs">
+    {% load static %}
+    <header>
+        <div class="header-left">
+            <a href="{% url 'index' %}">
+                <img src="{% static 'proj/images/finsage_logo.webp' %}" alt="Finsages Logo">
+            </a>
+            <div class="header-text">
+                <h1>Finsages</h1>
+                <span class="header-motto">Empowering your finances</span>
+            </div>
+        </div>
+    </header>
+    <div class="content w-full max-w-xs p-6 bg-white rounded-lg shadow-md">
         <h2 class="text-2xl text-gray-800 font-bold mb-6">Login</h2>
 
         {% if message %}
@@ -37,5 +89,4 @@
         </p>
     </div>
 </body>
-{% endblock %}
 </html>
