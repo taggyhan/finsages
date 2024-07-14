@@ -9,19 +9,11 @@
 <h2>Transactions Over the Past Year</h2>
 <canvas id="transactionChart" width="400" height="200"></canvas>
 
-<div style="display: flex; justify-content: space-between; margin-top: 20px;">
-    <!-- Header for the Inflow Pie Chart -->
-    <div style="width: 45%;">
-        <h2>Inflow Categories (Past Year)</h2>
-        <canvas id="inflowPieChart" width="200" height="200"></canvas>
-    </div>
-    <!-- Header for the Outflow Pie Chart -->
-    <div style="width: 45%;">
-        <h2>Outflow Categories (Past Year)</h2>
-        <canvas id="outflowPieChart" width="200" height="200"></canvas>
-    </div>
+<!-- Header for the Outflow Pie Chart -->
+<div style="width: 45%; margin-top: 20px; margin-left: auto; margin-right: auto; text-align: center;">
+    <h2>Categorized Spending (Past Year)</h2>
+    <canvas id="outflowPieChart" width="200" height="200"></canvas>
 </div>
-
 
 <!-- Include Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -77,45 +69,28 @@
                         title: {
                             display: true,
                             text: 'Amount'
-                        }
+                        },
+                        beginAtZero: true
                     }
+                },
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Monthly Inflow and Outflow'
+                    }
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true
                 }
-            }
-        });
-
-        // Inflow Pie Chart
-        var inflowCtx = document.getElementById('inflowPieChart').getContext('2d');
-        var inflowCategories = {{ inflow_categories|safe }};
-        var inflowLabels = Object.keys(inflowCategories);
-        var inflowData = Object.values(inflowCategories);
-
-        var inflowPieChart = new Chart(inflowCtx, {
-            type: 'pie',
-            data: {
-                labels: inflowLabels,
-                datasets: [{
-                    data: inflowData,
-                    backgroundColor: [
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true
             }
         });
 
@@ -151,7 +126,27 @@
                 }]
             },
             options: {
-                responsive: true
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Categorized Spending (Past Year)'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.label || '';
+                                var value = context.raw || 0;
+                                var percentage = (value / outflowData.reduce((a, b) => a + b, 0) * 100).toFixed(2);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
             }
         });
     });

@@ -2,5 +2,5 @@ myenv/
 db.sqlite3
 __pycache__/
 *.pyc
-build_files.
-.env
+build_files.sh
+.env    

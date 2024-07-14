@@ -173,11 +173,15 @@ def add_transaction(request):
 
             # Use ML model to predict the category based on the description
             description = form.cleaned_data['description']
-            if description:
+            
+            transaction_type = form.cleaned_data['type']
+            
+            if transaction_type == 'outflow' and description:
                 predicted_category = predict_category(description)
                 transaction.category = predicted_category  # Assign the predicted category to the transaction
             else:
                 transaction.category = None
+
 
             transaction.save()
             messages.success(request, 'Transaction added successfully!')
@@ -260,6 +264,8 @@ def analysis(request):
     return render(request, 'proj/analysis.html', context)
 
 '''
+
+
 @login_required
 def analysis(request):
     # Calculate the date one year ago
@@ -268,26 +274,12 @@ def analysis(request):
     # Get aggregate transactions for the last year
     chart_data = get_aggregate_transactions(request.user, one_year_ago)
     
-    # Aggregate transactions by their 'category' and sum their amounts
-    categories = Transaction.objects.values('category').annotate(total=Count('category')).order_by('category')
-    
-    # Retrieve detailed transactions grouped by category
-    detailed_transactions = {}
-    inflow_categories = {}
-    outflow_categories = {}
-    for category in categories:
-        detailed_transactions[category['category']] = Transaction.objects.filter(category=category['category'])
-        inflow_total = Transaction.objects.filter(category=category['category'], type='inflow').aggregate(Sum('amount'))['amount__sum'] or 0
-        outflow_total = Transaction.objects.filter(category=category['category'], type='outflow').aggregate(Sum('amount'))['amount__sum'] or 0
-        inflow_categories[category['category']] = inflow_total
-        outflow_categories[category['category']] = outflow_total
+    # Aggregate outflow transactions by their 'category' and sum their amounts
+    outflow_categories = Transaction.objects.filter(type='outflow').values('category').annotate(total=Sum('amount')).order_by('category')
 
     context = {
         'chart_data': json.dumps(chart_data, cls=DecimalEncoder),
-        'categories': categories,
-        'detailed_transactions': detailed_transactions,
-        'inflow_categories': json.dumps(inflow_categories, cls=DecimalEncoder),
-        'outflow_categories': json.dumps(outflow_categories, cls=DecimalEncoder),
+        'outflow_categories': json.dumps({category['category']: category['total'] for category in outflow_categories}, cls=DecimalEncoder),
     }
 
     return render(request, 'proj/analysis.html', context)
