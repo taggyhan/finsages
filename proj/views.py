@@ -24,9 +24,10 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth import get_user_model
 from decimal import Decimal
 import os 
+from dotenv import load_dotenv
 User = get_user_model()
 # Your views and logic here
-
+load_dotenv()
 
 
 class DecimalEncoder(json.JSONEncoder):
