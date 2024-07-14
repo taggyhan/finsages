@@ -23,6 +23,7 @@ import openai
 from django.http import HttpResponseRedirect
 from django.contrib.auth import get_user_model
 from decimal import Decimal
+import os 
 User = get_user_model()
 # Your views and logic here
 
@@ -292,7 +293,7 @@ def analysis(request):
 
 
 #openai.api_key = ("sk-proj-ifyCyZ9L5Svlv4LCFC2yT3BlbkFJmItvIOx8EclYsm8CTSLw")
-OPENAI_API_KEY="sk-proj-ifyCyZ9L5Svlv4LCFC2yT3BlbkFJmItvIOx8EclYsm8CTSLw";
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY");
 
 def decimal_default(obj):
     if isinstance(obj, Decimal):
