@@ -291,8 +291,6 @@ def analysis(request):
 
     return render(request, 'proj/analysis.html', context)
 
-
-#openai.api_key = ("sk-proj-ifyCyZ9L5Svlv4LCFC2yT3BlbkFJmItvIOx8EclYsm8CTSLw")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY");
 
 def decimal_default(obj):
