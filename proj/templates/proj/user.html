@@ -3,6 +3,7 @@
 {% block title %}User Dashboard{% endblock %}
 
 {% block content %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,8 +37,10 @@
         <h1 class="text-4xl font-bold mb-6">Welcome, {{ user.username }}!</h1>
         <div class="bg-gray-100 p-6 rounded-lg shadow-sm mb-6">
             <div class="mb-4">
-                <p class="text-lg">Total Current Assets:</p>
-                <p class="text-2xl font-semibold">{{ user.getTotalAssets|default:"0" }} {{ user.currency_preference }}</p>
+                <p class="text-lg">Net Inflow This Month:</p>
+                <p class="text-2xl font-semibold" style="color: {% if net_inflow < 0 %}red{% else %}green{% endif %};">
+                    {{ net_inflow|default:"0"|intcomma }} {{ user.currency_preference }}
+                </p>
             </div>
             <div class="flex space-x-4">
                 <a href="{% url 'add_transaction' %}" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition duration-300 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-1 motion-reduce:transform-none">
@@ -68,4 +71,3 @@
 </body>
 {% endblock %}
 </html>
-
