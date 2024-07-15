@@ -1,34 +1,28 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.contrib.auth.models import User
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 from django.utils import timezone
-from datetime import timedelta
+from datetime import datetime, timedelta
 from decimal import Decimal
-from django.db.models.functions import TruncMonth 
 from django.db.models import Sum, Q, Count
+from django.db.models.functions import TruncMonth 
 from .models import Transaction, Goal
 from .forms import TransactionForm, GoalForm, ChatForm
 from .ml_model import predict_category
 import json
-from openai import OpenAI
-from django import forms
 import openai
-from django.http import HttpResponseRedirect
-from django.contrib.auth import get_user_model
-from decimal import Decimal
-import os 
+import os
 from dotenv import load_dotenv
+
 User = get_user_model()
 # Your views and logic here
 load_dotenv()
-
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -62,8 +56,30 @@ def index(request):
     # If no user is signed in, return to login page:
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse("login"))
-    return render(request, "proj/user.html")
 
+    user = request.user
+    now = timezone.now()
+
+    # Calculate the first and last day of the current month
+    first_day_of_month = datetime(now.year, now.month, 1)
+    last_day_of_month = datetime(now.year, now.month + 1, 1) - timezone.timedelta(days=1) if now.month != 12 else datetime(now.year + 1, 1, 1) - timezone.timedelta(days=1)
+
+    # Filter and aggregate transactions for the current month
+    inflow = Transaction.objects.filter(user=user, type='inflow', date__gte=first_day_of_month, date__lte=last_day_of_month).aggregate(total=Sum('amount'))['total'] 
+    outflow = Transaction.objects.filter(user=user, type='outflow', date__gte=first_day_of_month, date__lte=last_day_of_month).aggregate(total=Sum('amount'))['total'] 
+
+    # Handle None values
+    inflow = inflow or 0
+    outflow = outflow or 0
+
+    net_inflow = inflow - outflow
+
+    context = {
+        'user': user,
+        'net_inflow': net_inflow,
+    }
+
+    return render(request, "proj/user.html", context)
 def login_view(request):
     if request.method == "POST":
         # Attempt to sign user in
@@ -400,3 +416,22 @@ def delete_goal(request, goal_id):
     goal = Goal.objects.get(id=goal_id, user=request.user)
     goal.delete()
     return redirect('goals_view')
+
+
+@login_required
+def transactions_by_category(request):
+    # Fetch all transactions for the logged-in user
+    user_transactions = Transaction.objects.filter(user=request.user)
+    
+    # Group transactions by category
+    detailed_transactions = {}
+    for transaction in user_transactions:
+        if transaction.category not in detailed_transactions:
+            detailed_transactions[transaction.category] = []
+        detailed_transactions[transaction.category].append(transaction)
+    
+    context = {
+        'detailed_transactions': detailed_transactions
+    }
+    
+    return render(request, 'proj/transactions_by_category.html', context)

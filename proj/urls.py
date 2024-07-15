@@ -19,5 +19,6 @@ urlpatterns = [
     path('goals/update/<int:goal_id>/', views.update_goal, name='update_goal'),
     path('goals/update_amount/<int:goal_id>/', views.update_goal_amount, name='update_goal_amount'),
     path('goal/delete/<int:goal_id>/', views.delete_goal, name='delete_goal'),
+    path('transactions-by-category/', views.transactions_by_category, name='transactions_by_category')
 ]
 

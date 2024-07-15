@@ -1,20 +1,37 @@
 <!-- transactions_by_category.html in your templates directory -->
-{% extends "proj/layout.html" %}
-
-{% block content %}
-<div class="container">
-    <h2>Transactions Grouped by Category</h2>
-    <ul>
-        {% for category, transactions in detailed_transactions.items %}
-        <li>
-            <strong>Category: {{ category }}</strong>
-            <ul>
-                {% for transaction in transactions %}
-                <li>{{ transaction.description }} - ${{ transaction.amount }} on {{ transaction.date }}</li>
-                {% endfor %}
-            </ul>
-        </li>
-        {% endfor %}
-    </ul>
-</div>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detailed Transactions by Category</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-6">
+        <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-8 rounded-lg shadow-lg">
+            <h1 class="text-4xl font-bold mb-6 text-center text-white">Detailed Transactions by Category</h1>
+            <h2 class="text-2xl font-semibold mb-4 text-white">Transactions Grouped by Category</h2>
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <ul class="space-y-6">
+                    {% for category, transactions in detailed_transactions.items %}
+                    <li>
+                        <div class="bg-gray-50 p-6 rounded-md shadow-sm">
+                            <strong class="text-xl text-gray-900">{{ category }}</strong>
+                            <ul class="list-disc list-inside ml-5 mt-3 space-y-2">
+                                {% for transaction in transactions %}
+                                <li class="text-gray-700">{{ transaction.description }} - <span class="font-semibold">${{ transaction.amount }}</span> on <span class="italic">{{ transaction.date }}</span></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="mt-10 text-center">
+                <a href="{% url 'analysis' %}" class="inline-block bg-white text-blue-500 py-2 px-4 rounded-md shadow hover:bg-blue-100 transition duration-300">Back to Analysis</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
