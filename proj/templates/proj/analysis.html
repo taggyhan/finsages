@@ -40,6 +40,11 @@
             <h2 class="text-2xl font-bold mb-4">Categorized Spending (Past Year)</h2>
             <canvas id="outflowPieChart" class="w-full h-96"></canvas>
         </div>
+
+        <!-- Link to Transactions by Category page -->
+        <div class="mt-8 text-center">
+            <a href="{% url 'transactions_by_category' %}" class="text-blue-500 hover:text-blue-700 underline">View Transactions by Category</a>
+        </div>
     </div>
 
     <!-- Include Chart.js -->

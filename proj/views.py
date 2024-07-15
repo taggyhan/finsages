@@ -24,7 +24,6 @@ User = get_user_model()
 # Your views and logic here
 load_dotenv()
 
-
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Decimal):
@@ -417,3 +416,22 @@ def delete_goal(request, goal_id):
     goal = Goal.objects.get(id=goal_id, user=request.user)
     goal.delete()
     return redirect('goals_view')
+
+
+@login_required
+def transactions_by_category(request):
+    # Fetch all transactions for the logged-in user
+    user_transactions = Transaction.objects.filter(user=request.user)
+    
+    # Group transactions by category
+    detailed_transactions = {}
+    for transaction in user_transactions:
+        if transaction.category not in detailed_transactions:
+            detailed_transactions[transaction.category] = []
+        detailed_transactions[transaction.category].append(transaction)
+    
+    context = {
+        'detailed_transactions': detailed_transactions
+    }
+    
+    return render(request, 'proj/transactions_by_category.html', context)
