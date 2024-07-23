@@ -8,7 +8,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:12  # You can use any version of PostgreSQL that matches your production setup
+        image: postgres:12 # You can use any version of PostgreSQL that matches your production setup
         env:
           POSTGRES_DB: mydb
           POSTGRES_USER: user
@@ -28,7 +28,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.12'  # Specify the Python version you need for your Django project
+          python-version: '3.12' # Specify the Python version you need for your Django project
 
       - name: Install dependencies
         run: |
@@ -48,5 +48,3 @@ jobs:
 
       - name: Run tests
         run: python manage.py test
-
-

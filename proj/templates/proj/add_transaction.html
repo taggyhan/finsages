@@ -1,128 +1,131 @@
-{% extends "proj/layout.html" %}
-
-{% block content %}
+{% extends "proj/layout.html" %} {% block content %}
 <div class="container">
-    <h2>Add Transaction</h2>
-    <form method="post" class="transaction-form">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="id_type" class="form-label">Type:</label>
-            {{ form.type }}
-        </div>
-        <div class="form-group">
-            <label for="amount-input" class="form-label">Amount:</label>
-            {{ form.amount }}
-        </div>
-        <div class="form-group">
-            <label for="id_description" class="form-label">Description (Optional):</label>
-            {{ form.description }}
-        </div>
-        <div class="form-group">
-            <label for="id_date" class="form-label">Date:</label>
-            {{ form.date }}
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <a href="{% url 'index' %}" class="btn btn-secondary btn-link">Back to Home</a>
-        <a href="{% url 'list_transactions' %}" class="btn btn-secondary btn-link">View Transactions</a>
-    </form>
+  <h2>Add Transaction</h2>
+  <form method="post" class="transaction-form">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="id_type" class="form-label">Type:</label>
+      {{ form.type }}
+    </div>
+    <div class="form-group">
+      <label for="amount-input" class="form-label">Amount:</label>
+      {{ form.amount }}
+    </div>
+    <div class="form-group">
+      <label for="id_description" class="form-label"
+        >Description (Optional):</label
+      >
+      {{ form.description }}
+    </div>
+    <div class="form-group">
+      <label for="id_date" class="form-label">Date:</label>
+      {{ form.date }}
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <a href="{% url 'index' %}" class="btn btn-secondary btn-link"
+      >Back to Home</a
+    >
+    <a href="{% url 'list_transactions' %}" class="btn btn-secondary btn-link"
+      >View Transactions</a
+    >
+  </form>
 </div>
 
 <style>
-    .container {
-        max-width: 600px;
-        margin: 20px auto;
-        padding: 20px;
-        background-color: #f8f9fa;
-        border: 1px solid #e9ecef;
-        border-radius: 0.25rem;
-        box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
-    }
-    h2 {
-        color: #007bff;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    .form-group {
-        margin-bottom: 15px;
-    }
-    .form-control {
-        display: block;
-        width: 100%;
-        padding: 8px 10px;
-        font-size: 16px;
-        line-height: 1.5;
-        color: #495057;
-        background-color: #fff;
-        background-clip: padding-box;
-        border: 2px solid #ced4da;
-        border-radius: 0.3rem;
-        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-    }
-    .form-control:focus {
-        border-color: #80bdff;
-        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-    }
-    .form-label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 500;
-        color: #343a40;
-    }
-    .btn {
-        padding: 10px 15px;
-        font-size: 18px;
-        border-radius: 5px;
-        border: none;
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-    .btn-primary {
-        color: #fff;
-        background-color: #007bff;
-    }
-    .btn-primary:hover {
-        background-color: #0056b3;
-    }
-    .btn-secondary {
-        color: #fff;
-        background-color: #6c757d;
-    }
-    .btn-secondary:hover {
-        background-color: #5a6268;
-    }
-    .btn-link {
-        margin-top: 10px;
-        display: inline-block;
-    }
+  .container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  }
+  h2 {
+    color: #007bff;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .form-group {
+    margin-bottom: 15px;
+  }
+  .form-control {
+    display: block;
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 2px solid #ced4da;
+    border-radius: 0.3rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+  .form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+  .form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #343a40;
+  }
+  .btn {
+    padding: 10px 15px;
+    font-size: 18px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .btn-primary {
+    color: #fff;
+    background-color: #007bff;
+  }
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+  .btn-secondary {
+    color: #fff;
+    background-color: #6c757d;
+  }
+  .btn-secondary:hover {
+    background-color: #5a6268;
+  }
+  .btn-link {
+    margin-top: 10px;
+    display: inline-block;
+  }
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const amountInput = document.getElementById('amount-input');
+  document.addEventListener('DOMContentLoaded', function () {
+    const amountInput = document.getElementById('amount-input');
 
-        // Prevent invalid characters on keypress
-        amountInput.addEventListener('keypress', function(e) {
-            if (e.key === 'e' || e.key === 'E' || e.key === '+' || e.key === '-') {
-                e.preventDefault();
-            }
-        });
-
-        // Prevent invalid characters on paste
-        amountInput.addEventListener('paste', function(e) {
-            const clipboardData = e.clipboardData || window.clipboardData;
-            const pastedData = clipboardData.getData('Text');
-            if (/[^0-9.]/.test(pastedData)) {
-                e.preventDefault();
-            }
-        });
-
-        // Prevent invalid characters on input
-        amountInput.addEventListener('input', function(e) {
-            if (/[^0-9.]/.test(amountInput.value)) {
-                amountInput.value = amountInput.value.replace(/[^0-9.]/g, '');
-            }
-        });
+    // Prevent invalid characters on keypress
+    amountInput.addEventListener('keypress', function (e) {
+      if (e.key === 'e' || e.key === 'E' || e.key === '+' || e.key === '-') {
+        e.preventDefault();
+      }
     });
+
+    // Prevent invalid characters on paste
+    amountInput.addEventListener('paste', function (e) {
+      const clipboardData = e.clipboardData || window.clipboardData;
+      const pastedData = clipboardData.getData('Text');
+      if (/[^0-9.]/.test(pastedData)) {
+        e.preventDefault();
+      }
+    });
+
+    // Prevent invalid characters on input
+    amountInput.addEventListener('input', function (e) {
+      if (/[^0-9.]/.test(amountInput.value)) {
+        amountInput.value = amountInput.value.replace(/[^0-9.]/g, '');
+      }
+    });
+  });
 </script>
 {% endblock %}
-
