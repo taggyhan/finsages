@@ -6,41 +6,58 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('proj', '0001_initial'),
+        ("proj", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='country',
+            model_name="user",
+            name="country",
             field=models.CharField(blank=True, max_length=100, null=True),
         ),
         migrations.AddField(
-            model_name='user',
-            name='currency_preference',
-            field=models.CharField(default='USD', max_length=3),
+            model_name="user",
+            name="currency_preference",
+            field=models.CharField(default="USD", max_length=3),
         ),
         migrations.AddField(
-            model_name='user',
-            name='date_of_birth',
+            model_name="user",
+            name="date_of_birth",
             field=models.DateField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='user',
-            name='time_zone',
-            field=models.CharField(default='UTC', max_length=50),
+            model_name="user",
+            name="time_zone",
+            field=models.CharField(default="UTC", max_length=50),
         ),
         migrations.CreateModel(
-            name='Asset',
+            name="Asset",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('asset_type', models.CharField(max_length=100)),
-                ('description', models.CharField(blank=True, max_length=255, null=True)),
-                ('value', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('acquisition_date', models.DateField()),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='assets', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("asset_type", models.CharField(max_length=100)),
+                (
+                    "description",
+                    models.CharField(blank=True, max_length=255, null=True),
+                ),
+                ("value", models.DecimalField(decimal_places=2, max_digits=10)),
+                ("acquisition_date", models.DateField()),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="assets",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

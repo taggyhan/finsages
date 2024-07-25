@@ -1,113 +1,127 @@
-{% extends "proj/layout.html" %}
-
-{% block content %}
+{% extends "proj/layout.html" %} {% block content %}
 <div class="container">
-    <h2>Goals</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Target Amount</th>
-                <th>Months to Save</th>
-                <th>Amount Saved</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for goal in goals %}
-            <tr>
-                <td>{{ goal.name }}</td>
-                <td>{{ goal.target_amount }}</td>
-                <td>{{ goal.months_to_save }}</td>
-                <td>{{ goal.amount_saved }}</td>
-                <td>
-                    <a href="{% url 'update_goal' goal.id %}" class="btn btn-primary btn-sm">Edit</a>
-                    <form method="post" action="{% url 'delete_goal' goal.id %}" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <th><a href="{% url 'add_goal' %}" class="btn btn-success btn-link">Add New Goal</a></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th><a href="{% url 'chatbot' %}" class="btn btn-success btn-link">Get advice</a></th>
-            </tr>
-        </tbody>
-    </table>
-    <!-- <a href="{% url 'add_goal' %}" class="btn btn-success btn-link">Add New Goal</a>
+  <h2>Goals</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Target Amount</th>
+        <th>Months to Save</th>
+        <th>Amount Saved</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for goal in goals %}
+      <tr>
+        <td>{{ goal.name }}</td>
+        <td>{{ goal.target_amount }}</td>
+        <td>{{ goal.months_to_save }}</td>
+        <td>{{ goal.amount_saved }}</td>
+        <td>
+          <a
+            href="{% url 'update_goal' goal.id %}"
+            class="btn btn-primary btn-sm"
+            >Edit</a
+          >
+          <form
+            method="post"
+            action="{% url 'delete_goal' goal.id %}"
+            style="display: inline"
+          >
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      <tr>
+        <th>
+          <a href="{% url 'add_goal' %}" class="btn btn-success btn-link"
+            >Add New Goal</a
+          >
+        </th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th>
+          <a href="{% url 'chatbot' %}" class="btn btn-success btn-link"
+            >Get advice</a
+          >
+        </th>
+      </tr>
+    </tbody>
+  </table>
+  <!-- <a href="{% url 'add_goal' %}" class="btn btn-success btn-link">Add New Goal</a>
     <a href="{% url 'chatbot' %}" class="btn btn-success btn-link">Get advice</a> -->
 </div>
 
 <style>
-    .container {
-        max-width: 800px;
-        margin: 20px auto;
-        padding: 20px;
-        background-color: #f8f9fa;
-        border: 1px solid #e9ecef;
-        border-radius: 0.25rem;
-        box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
-    }
-    h2 {
-        color: #007bff;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    .table {
-        width: 100%;
-        margin-bottom: 1rem;
-        color: #212529;
-        border-collapse: collapse;
-    }
-    .table th,
-    .table td {
-        padding: 0.75rem;
-        vertical-align: top;
-        border-top: 1px solid #dee2e6;
-    }
-    .table thead th {
-        vertical-align: bottom;
-        border-bottom: 2px solid #dee2e6;
-    }
-    .table tbody + tbody {
-        border-top: 2px solid #dee2e6;
-    }
-    .btn {
-        padding: 10px 15px;
-        font-size: 18px;
-        border-radius: 5px;
-        border: none;
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-    .btn-primary {
-        color: #fff;
-        background-color: #007bff;
-    }
-    .btn-primary:hover {
-        background-color: #0056b3;
-    }
-    .btn-danger {
-        color: #fff;
-        background-color: #dc3545;
-    }
-    .btn-danger:hover {
-        background-color: #c82333;
-    }
-    .btn-success {
-        color: #fff;
-        background-color: #28a745;
-    }
-    .btn-success:hover {
-        background-color: #218838;
-    }
-    .btn-link {
-        margin-top: 10px;
-        display: inline-block;
-    }
+  .container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  }
+  h2 {
+    color: #007bff;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #212529;
+    border-collapse: collapse;
+  }
+  .table th,
+  .table td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+  }
+  .table thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #dee2e6;
+  }
+  .table tbody + tbody {
+    border-top: 2px solid #dee2e6;
+  }
+  .btn {
+    padding: 10px 15px;
+    font-size: 18px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .btn-primary {
+    color: #fff;
+    background-color: #007bff;
+  }
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+  .btn-danger {
+    color: #fff;
+    background-color: #dc3545;
+  }
+  .btn-danger:hover {
+    background-color: #c82333;
+  }
+  .btn-success {
+    color: #fff;
+    background-color: #28a745;
+  }
+  .btn-success:hover {
+    background-color: #218838;
+  }
+  .btn-link {
+    margin-top: 10px;
+    display: inline-block;
+  }
 </style>
 {% endblock %}
