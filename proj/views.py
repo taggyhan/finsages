@@ -293,13 +293,13 @@ def update_transaction(request):
 def analysis(request):
     # Calculate the date one year ago
     one_year_ago = timezone.now().date() - timedelta(days=365)
-    
+
     # Get aggregate transactions for the last year
     chart_data = get_aggregate_transactions(request.user, one_year_ago)
-    
+
     # Aggregate transactions by their 'category' and counts them
     categories = Transaction.objects.values('category').annotate(total=Count('category')).order_by('category')
-    
+
     # Retrieve detailed transactions grouped by category
     detailed_transactions = {}
     for category in categories:

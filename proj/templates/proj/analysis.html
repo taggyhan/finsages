@@ -58,7 +58,7 @@
         document.addEventListener("DOMContentLoaded", function() {
             var ctx = document.getElementById('transactionChart').getContext('2d');
             var chartData = {{ chart_data|safe }};
-            
+
             var transactionChart = new Chart(ctx, {
                 type: 'line',
                 data: {
