@@ -1,25 +1,27 @@
-from django.shortcuts import render, redirect
-from django.http import JsonResponse, HttpResponseRedirect
-from django.urls import reverse
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import authenticate, login, logout, get_user_model
-from django.contrib.auth.decorators import login_required
-from django.db import IntegrityError
-from django.contrib import messages
-from django.views.decorators.http import require_POST
-from django.utils import timezone
+import json
+import os
 from datetime import datetime, timedelta
 from decimal import Decimal
-from django.db.models import Sum, Q, Count
-from django.db.models.functions import TruncMonth
-from .models import Transaction, Goal
-from .forms import TransactionForm, GoalForm, ChatForm
-from .ml_model import predict_category
-import json
+
 import openai
-import os
+from django.contrib import messages
+from django.contrib.auth import authenticate, get_user_model, login, logout
+from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError
+from django.db.models import Count, Q, Sum
+from django.db.models.functions import TruncMonth
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from dotenv import load_dotenv
 from openai import OpenAI
+
+from .forms import ChatForm, GoalForm, TransactionForm
+from .ml_model import predict_category
+from .models import Goal, Transaction
 
 User = get_user_model()
 # Your views and logic here
