@@ -1,84 +1,69 @@
-{% extends "proj/layout.html" %} {% block content %}
+{% extends "proj/layout.html" %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatbot</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-      body {
-        font-family: 'Inter', sans-serif;
-      }
-      .btn {
-        padding: 10px 15px;
-        font-size: 18px;
-        border-radius: 5px;
-        border: none;
-        cursor: pointer;
-        transition: background-color 0.2s;
-      }
-      .btn-primary {
-        color: #fff;
-        background-color: #007bff;
-      }
-      .btn-primary:hover {
-        background-color: #0056b3;
-      }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .btn {
+            padding: 10px 15px;
+            font-size: 18px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-primary {
+            color: #fff;
+            background-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
     </style>
-  </head>
-  <body class="bg-gray-100 p-6">
-    <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-      <h2 class="text-3xl font-bold text-blue-600 text-center mb-6">Chatbot</h2>
-      <form method="post" autocomplete="off" class="space-y-4">
-        {% csrf_token %}
-        <div class="form-group">
-          <label for="goal" class="block text-lg font-medium text-gray-700 mb-2"
-            >Select a goal for advice:</label
-          >
-          {{ form.goal }}
-        </div>
-        <div class="form-group">
-          <label
-            for="message"
-            class="block text-lg font-medium text-gray-700 mb-2"
-            >Your message:</label
-          >
-          {{ form.message }}
-        </div>
-        <button
-          type="submit"
-          class="
-            bg-blue-600
-            text-white
-            py-2
-            px-4
-            rounded-md
-            hover:bg-blue-700
-            transition
-            duration-300
-          "
-        >
-          Send
-        </button>
-      </form>
+</head>
+<body class="bg-gray-100 p-6">
 
-      {% if user_message %}
-      <div class="mt-6 bg-gray-100 p-4 rounded-lg shadow-md">
-        <h5 class="text-lg font-bold text-gray-700 mb-2">Your Message:</h5>
-        <p class="text-gray-600">{{ user_message }}</p>
-      </div>
-      {% endif %} {% if bot_response %}
-      <div class="mt-6 bg-gray-100 p-4 rounded-lg shadow-md">
-        <h5 class="text-lg font-bold text-gray-700 mb-2">Bot's Response:</h5>
-        <p class="text-gray-600">{{ bot_response }}</p>
-      </div>
-      {% endif %}
+    <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <h2 class="text-3xl font-bold text-blue-600 text-center mb-6">Chatbot</h2>
+        <form method="post" autocomplete="off" class="space-y-4">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="goal" class="block text-lg font-medium text-gray-700 mb-2">Select a goal for advice:</label>
+                {{ form.goal }}
+            </div>
+            <div class="form-group">
+                <label for="message" class="block text-lg font-medium text-gray-700 mb-2">Your message:</label>
+                {{ form.message }}
+            </div>
+            <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300">
+                Send
+            </button>
+        </form>
+
+        {% if user_message %}
+            <div class="mt-6 bg-gray-100 p-4 rounded-lg shadow-md">
+                <h5 class="text-lg font-bold text-gray-700 mb-2">Your Message:</h5>
+                <p class="text-gray-600">{{ user_message }}</p>
+            </div>
+        {% endif %}
+
+        {% if bot_response %}
+            <div class="mt-6 bg-gray-100 p-4 rounded-lg shadow-md">
+                <h5 class="text-lg font-bold text-gray-700 mb-2">Bot's Response:</h5>
+                <p class="text-gray-600">{{ bot_response }}</p>
+            </div>
+        {% endif %}
     </div>
-  </body>
-  {% endblock %}
+
+</body>
+{% endblock %}
 </html>
