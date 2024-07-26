@@ -1,16 +1,15 @@
 {% extends 'proj/layout.html' %}
-
 {% block title %}Transaction Analysis{% endblock %}
-
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transaction Analysis</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Transaction Analysis</title>
+            <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+                  rel="stylesheet">
+            <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
@@ -22,39 +21,34 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
-    </style>
-</head>
-<body class="bg-gradient-to-r from-gray-100 to-gray-200 p-6">
-
-    <div class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-lg fade-in">
-        <h1 class="text-4xl font-bold mb-6">Analysis</h1>
-
-        <!-- Header for the Line Chart -->
-        <div class="mb-8">
-            <h2 class="text-2xl font-bold mb-4">Transactions Over the Past Year</h2>
-            <canvas id="transactionChart" class="w-full h-96"></canvas>
-        </div>
-
-        <!-- Header for the Outflow Pie Chart -->
-        <div class="w-full md:w-1/2 mx-auto mb-8 text-center">
-            <h2 class="text-2xl font-bold mb-4">Categorized Spending (Past Year)</h2>
-            <canvas id="outflowPieChart" class="w-full h-96"></canvas>
-        </div>
-
-        <!-- Link to Transactions by Category page -->
-        <div class="mt-8 text-center">
-            <a href="{% url 'transactions_by_category' %}" class="text-blue-500 hover:text-blue-700 underline">View Transactions by Category</a>
-        </div>
-    </div>
-
-    <!-- Include Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Include Luxon -->
-    <script src="https://cdn.jsdelivr.net/npm/luxon@2.1.1/build/global/luxon.min.js"></script>
-    <!-- Include the Chart.js Luxon adapter -->
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.1.0"></script>
-
-    <script>
+            </style>
+        </head>
+        <body class="bg-gradient-to-r from-gray-100 to-gray-200 p-6">
+            <div class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-lg fade-in">
+                <h1 class="text-4xl font-bold mb-6">Analysis</h1>
+                <!-- Header for the Line Chart -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold mb-4">Transactions Over the Past Year</h2>
+                    <canvas id="transactionChart" class="w-full h-96"></canvas>
+                </div>
+                <!-- Header for the Outflow Pie Chart -->
+                <div class="w-full md:w-1/2 mx-auto mb-8 text-center">
+                    <h2 class="text-2xl font-bold mb-4">Categorized Spending (Past Year)</h2>
+                    <canvas id="outflowPieChart" class="w-full h-96"></canvas>
+                </div>
+                <!-- Link to Transactions by Category page -->
+                <div class="mt-8 text-center">
+                    <a href="{% url 'transactions_by_category' %}"
+                       class="text-blue-500 hover:text-blue-700 underline">View Transactions by Category</a>
+                </div>
+            </div>
+            <!-- Include Chart.js -->
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <!-- Include Luxon -->
+            <script src="https://cdn.jsdelivr.net/npm/luxon@2.1.1/build/global/luxon.min.js"></script>
+            <!-- Include the Chart.js Luxon adapter -->
+            <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.1.0"></script>
+            <script>
         document.addEventListener("DOMContentLoaded", function() {
             var ctx = document.getElementById('transactionChart').getContext('2d');
             var chartData = {{ chart_data|safe }};
@@ -182,6 +176,6 @@
                 }
             });
         });
-    </script>
-</body>
-{% endblock %}
+            </script>
+        </body>
+    {% endblock %}

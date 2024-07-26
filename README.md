@@ -1,6 +1,6 @@
 ## Prerequisites
 
-Ensure you have Python and pip installed on your machine. You can verify your installation by running:
+Ensure you have Python3.12 and pip installed on your machine. You can verify your installation by running:
 
 `python --version pip --version`
 

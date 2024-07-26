@@ -1,32 +1,30 @@
 {% extends "proj/layout.html" %}
-
 {% block content %}
-<div class="container">
-    <h2>Update Goal</h2>
-    <form method="post" class="goal-form">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="id_name" class="form-label">Name:</label>
-            {{ form.name }}
-        </div>
-        <div class="form-group">
-            <label for="id_target_amount" class="form-label">Target Amount:</label>
-            {{ form.target_amount }}
-        </div>
-        <div class="form-group">
-            <label for="id_months_to_save" class="form-label">Months to Save:</label>
-            {{ form.months_to_save }}
-        </div>
-        <div class="form-group">
-            <label for="id_amount_saved" class="form-label">Amount Saved:</label>
-            {{ form.amount_saved }}
-        </div>
-        <button type="submit" class="btn btn-primary">Update Goal</button>
-        <a href="{% url 'goals_view' %}" class="btn btn-secondary btn-link">Back to Goals</a>
-    </form>
-</div>
-
-<style>
+    <div class="container">
+        <h2>Update Goal</h2>
+        <form method="post" class="goal-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_name" class="form-label">Name:</label>
+                {{ form.name }}
+            </div>
+            <div class="form-group">
+                <label for="id_target_amount" class="form-label">Target Amount:</label>
+                {{ form.target_amount }}
+            </div>
+            <div class="form-group">
+                <label for="id_months_to_save" class="form-label">Months to Save:</label>
+                {{ form.months_to_save }}
+            </div>
+            <div class="form-group">
+                <label for="id_amount_saved" class="form-label">Amount Saved:</label>
+                {{ form.amount_saved }}
+            </div>
+            <button type="submit" class="btn btn-primary">Update Goal</button>
+            <a href="{% url 'goals_view' %}" class="btn btn-secondary btn-link">Back to Goals</a>
+        </form>
+    </div>
+    <style>
     .container {
         max-width: 600px;
         margin: 20px auto;
@@ -93,5 +91,5 @@
         margin-top: 10px;
         display: inline-block;
     }
-</style>
+    </style>
 {% endblock %}
