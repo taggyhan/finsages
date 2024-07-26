@@ -1,59 +1,50 @@
-{% extends 'proj/layout.html' %} {% block title %}Transaction Analysis{%
-endblock %} {% block content %}
+{% extends 'proj/layout.html' %}
+
+{% block title %}Transaction Analysis{% endblock %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transaction Analysis</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-      body {
-        font-family: 'Inter', sans-serif;
-      }
-      .fade-in {
-        animation: fadeIn 1s ease-in-out;
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
         }
-        to {
-          opacity: 1;
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
         }
-      }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
     </style>
-  </head>
-  <body class="bg-gradient-to-r from-gray-100 to-gray-200 p-6">
+</head>
+<body class="bg-gradient-to-r from-gray-100 to-gray-200 p-6">
+
     <div class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-lg fade-in">
-      <h1 class="text-4xl font-bold mb-6">Analysis</h1>
+        <h1 class="text-4xl font-bold mb-6">Analysis</h1>
 
-      <!-- Header for the Line Chart -->
-      <div class="mb-8">
-        <h2 class="text-2xl font-bold mb-4">Transactions Over the Past Year</h2>
-        <canvas id="transactionChart" class="w-full h-96"></canvas>
-      </div>
+        <!-- Header for the Line Chart -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Transactions Over the Past Year</h2>
+            <canvas id="transactionChart" class="w-full h-96"></canvas>
+        </div>
 
-      <!-- Header for the Outflow Pie Chart -->
-      <div class="w-full md:w-1/2 mx-auto mb-8 text-center">
-        <h2 class="text-2xl font-bold mb-4">
-          Categorized Spending (Past Year)
-        </h2>
-        <canvas id="outflowPieChart" class="w-full h-96"></canvas>
-      </div>
+        <!-- Header for the Outflow Pie Chart -->
+        <div class="w-full md:w-1/2 mx-auto mb-8 text-center">
+            <h2 class="text-2xl font-bold mb-4">Categorized Spending (Past Year)</h2>
+            <canvas id="outflowPieChart" class="w-full h-96"></canvas>
+        </div>
 
-      <!-- Link to Transactions by Category page -->
-      <div class="mt-8 text-center">
-        <a
-          href="{% url 'transactions_by_category' %}"
-          class="text-blue-500 hover:text-blue-700 underline"
-          >View Transactions by Category</a
-        >
-      </div>
+        <!-- Link to Transactions by Category page -->
+        <div class="mt-8 text-center">
+            <a href="{% url 'transactions_by_category' %}" class="text-blue-500 hover:text-blue-700 underline">View Transactions by Category</a>
+        </div>
     </div>
 
     <!-- Include Chart.js -->
@@ -64,134 +55,133 @@ endblock %} {% block content %}
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.1.0"></script>
 
     <script>
-      document.addEventListener("DOMContentLoaded", function() {
-          var ctx = document.getElementById('transactionChart').getContext('2d');
-          var chartData = {{ chart_data|safe }};
+        document.addEventListener("DOMContentLoaded", function() {
+            var ctx = document.getElementById('transactionChart').getContext('2d');
+            var chartData = {{ chart_data|safe }};
+            
+            var transactionChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.months,
+                    datasets: [
+                        {
+                            label: 'Total Inflow',
+                            data: chartData.inflows,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            fill: true
+                        },
+                        {
+                            label: 'Total Outflow',
+                            data: chartData.outflows,
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'month',
+                                tooltipFormat: 'MMM yyyy',
+                                displayFormats: {
+                                    month: 'MMM yyyy'
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Month'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Amount'
+                            },
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Monthly Inflow and Outflow'
+                        }
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    }
+                }
+            });
 
-          var transactionChart = new Chart(ctx, {
-              type: 'line',
-              data: {
-                  labels: chartData.months,
-                  datasets: [
-                      {
-                          label: 'Total Inflow',
-                          data: chartData.inflows,
-                          borderColor: 'rgba(75, 192, 192, 1)',
-                          backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                          fill: true
-                      },
-                      {
-                          label: 'Total Outflow',
-                          data: chartData.outflows,
-                          borderColor: 'rgba(255, 99, 132, 1)',
-                          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                          fill: true
-                      }
-                  ]
-              },
-              options: {
-                  responsive: true,
-                  scales: {
-                      x: {
-                          type: 'time',
-                          time: {
-                              unit: 'month',
-                              tooltipFormat: 'MMM yyyy',
-                              displayFormats: {
-                                  month: 'MMM yyyy'
-                              }
-                          },
-                          title: {
-                              display: true,
-                              text: 'Month'
-                          }
-                      },
-                      y: {
-                          title: {
-                              display: true,
-                              text: 'Amount'
-                          },
-                          beginAtZero: true
-                      }
-                  },
-                  plugins: {
-                      tooltip: {
-                          mode: 'index',
-                          intersect: false
-                      },
-                      legend: {
-                          display: true,
-                          position: 'top'
-                      },
-                      title: {
-                          display: true,
-                          text: 'Monthly Inflow and Outflow'
-                      }
-                  },
-                  hover: {
-                      mode: 'nearest',
-                      intersect: true
-                  }
-              }
-          });
+            // Outflow Pie Chart
+            var outflowCtx = document.getElementById('outflowPieChart').getContext('2d');
+            var outflowCategories = {{ outflow_categories|safe }};
+            var outflowLabels = Object.keys(outflowCategories);
+            var outflowData = Object.values(outflowCategories);
 
-          // Outflow Pie Chart
-          var outflowCtx = document.getElementById('outflowPieChart').getContext('2d');
-          var outflowCategories = {{ outflow_categories|safe }};
-          var outflowLabels = Object.keys(outflowCategories);
-          var outflowData = Object.values(outflowCategories);
-
-          var outflowPieChart = new Chart(outflowCtx, {
-              type: 'pie',
-              data: {
-                  labels: outflowLabels,
-                  datasets: [{
-                      data: outflowData,
-                      backgroundColor: [
-                          'rgba(255, 99, 132, 0.2)',
-                          'rgba(75, 192, 192, 0.2)',
-                          'rgba(54, 162, 235, 0.2)',
-                          'rgba(255, 206, 86, 0.2)',
-                          'rgba(153, 102, 255, 0.2)',
-                          'rgba(255, 159, 64, 0.2)'
-                      ],
-                      borderColor: [
-                          'rgba(255, 99, 132, 1)',
-                          'rgba(75, 192, 192, 1)',
-                          'rgba(54, 162, 235, 1)',
-                          'rgba(255, 206, 86, 1)',
-                          'rgba(153, 102, 255, 1)',
-                          'rgba(255, 159, 64, 1)'
-                      ],
-                      borderWidth: 1
-                  }]
-              },
-              options: {
-                  responsive: true,
-                  plugins: {
-                      legend: {
-                          display: true,
-                          position: 'bottom'
-                      },
-                      title: {
-                          display: true,
-                          text: 'Categorized Spending (Past Year)'
-                      },
-                      tooltip: {
-                          callbacks: {
-                              label: function(context) {
-                                  var label = context.label || '';
-                                  var value = context.raw || 0;
-                                  var percentage = (value / outflowData.reduce((a, b) => a + b, 0) * 100).toFixed(2);
-                                  return `${label}: ${value} (${percentage}%)`;
-                              }
-                          }
-                      }
-                  }
-              }
-          });
-      });
+            var outflowPieChart = new Chart(outflowCtx, {
+                type: 'pie',
+                data: {
+                    labels: outflowLabels,
+                    datasets: [{
+                        data: outflowData,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Categorized Spending (Past Year)'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    var label = context.label || '';
+                                    var value = context.raw || 0;
+                                    var percentage = (value / outflowData.reduce((a, b) => a + b, 0) * 100).toFixed(2);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
     </script>
-  </body>
-  {% endblock %}
-</html>
+</body>
+{% endblock %}
