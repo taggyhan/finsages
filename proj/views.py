@@ -460,6 +460,14 @@ def goals_view(request):
     return render(request, "proj/goals.html", {"goals": goals})
 
 
+from django.shortcuts import render, redirect
+from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from .forms import GoalForm
+from .models import Goal
+from decimal import Decimal
+
 @login_required
 def add_goal(request):
     if request.method == "POST":
@@ -467,12 +475,12 @@ def add_goal(request):
         if form.is_valid():
             goal = form.save(commit=False)
             goal.user = request.user
+            goal.goal_date = timezone.now().date()
             goal.save()
             return redirect("goals_view")
     else:
         form = GoalForm()
     return render(request, "proj/add_goal.html", {"form": form})
-
 
 @login_required
 def update_goal(request, goal_id):
@@ -486,7 +494,6 @@ def update_goal(request, goal_id):
         form = GoalForm(instance=goal)
     return render(request, "proj/update_goal.html", {"form": form, "goal": goal})
 
-
 @login_required
 @require_POST
 def update_goal_amount(request, goal_id):
@@ -495,6 +502,7 @@ def update_goal_amount(request, goal_id):
     goal.amount_saved += amount
     goal.save()
     return redirect("goals_view")
+
 
 
 @login_required

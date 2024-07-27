@@ -82,6 +82,10 @@ class Transaction(models.Model):
         return f"{self.type} transaction of {self.amount} in category '{self.category}' on {self.date}"
 
 
+from django.db import models
+from django.conf import settings
+from django.utils import timezone
+
 class Goal(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="goals"
@@ -90,6 +94,7 @@ class Goal(models.Model):
     target_amount = models.DecimalField(max_digits=12, decimal_places=2)
     months_to_save = models.IntegerField()
     amount_saved = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    goal_date = models.DateField(default=timezone.now)
 
     def __str__(self):
         return (

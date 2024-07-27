@@ -1,14 +1,13 @@
 {% extends "proj/layout.html" %}
 {% block content %}
-    <!DOCTYPE html>
-    <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Add Goal</title>
-            <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-                  rel="stylesheet">
-            <style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Goal</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
@@ -26,48 +25,62 @@
             border-color: #3b82f6;
             background-color: #fff;
         }
-            </style>
-        </head>
-        <body class="bg-gray-100 p-6">
-            <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
-                <h2 class="text-3xl font-bold text-blue-600 text-center mb-6">Add Goal</h2>
-                <form method="post" autocomplete="off" class="space-y-4">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="id_name" class="block text-lg font-medium text-gray-700 mb-2">Name:</label>
-                        {{ form.name }}
-                    </div>
-                    <div class="form-group">
-                        <label for="id_target_amount"
-                               class="block text-lg font-medium text-gray-700 mb-2">Target Amount:</label>
-                        {{ form.target_amount }}
-                    </div>
-                    <div class="form-group">
-                        <label for="id_months_to_save"
-                               class="block text-lg font-medium text-gray-700 mb-2">Months to Save:</label>
-                        {{ form.months_to_save }}
-                    </div>
-                    <div class="form-group">
-                        <label for="id_amount_saved"
-                               class="block text-lg font-medium text-gray-700 mb-2">Amount Saved:</label>
-                        {{ form.amount_saved }}
-                    </div>
-                    <div class="flex space-x-4">
-                        <button type="submit"
-                                class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300">
-                            Add Goal
-                        </button>
-                        <a href="{% url 'index' %}"
-                           class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition duration-300">
-                            Back to Home
-                        </a>
-                        <a href="{% url 'goals_view' %}"
-                           class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition duration-300">
-                            View Goals
-                        </a>
-                    </div>
-                </form>
+        .text-red-600 {
+            color: #e3342f;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <h2 class="text-3xl font-bold text-blue-600 text-center mb-6">Add Goal</h2>
+        <form method="post" autocomplete="off" class="space-y-4">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="text-red-600 text-sm mb-4">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+            <div class="form-group">
+                <label for="id_name" class="block text-lg font-medium text-gray-700 mb-2">Name:</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <div class="text-red-600 text-sm mt-1">{{ form.name.errors }}</div>
+                {% endif %}
             </div>
-        </body>
-    {% endblock %}
+            <div class="form-group">
+                <label for="id_target_amount" class="block text-lg font-medium text-gray-700 mb-2">Target Amount:</label>
+                {{ form.target_amount }}
+                {% if form.target_amount.errors %}
+                    <div class="text-red-600 text-sm mt-1">{{ form.target_amount.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="id_months_to_save" class="block text-lg font-medium text-gray-700 mb-2">Months to Save:</label>
+                {{ form.months_to_save }}
+                {% if form.months_to_save.errors %}
+                    <div class="text-red-600 text-sm mt-1">{{ form.months_to_save.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="id_amount_saved" class="block text-lg font-medium text-gray-700 mb-2">Amount Saved:</label>
+                {{ form.amount_saved }}
+                {% if form.amount_saved.errors %}
+                    <div class="text-red-600 text-sm mt-1">{{ form.amount_saved.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="flex space-x-4">
+                <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300">
+                    Add Goal
+                </button>
+                <a href="{% url 'index' %}" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition duration-300">
+                    Back to Home
+                </a>
+                <a href="{% url 'goals_view' %}" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition duration-300">
+                    View Goals
+                </a>
+            </div>
+        </form>
+    </div>
+</body>
+{% endblock %}
 </html>
