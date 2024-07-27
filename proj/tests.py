@@ -306,3 +306,35 @@ class ViewsTestCase(TestCase):
         # Check for redirect after successful goal deletion
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("goals_view"))
+
+
+class FinancialAssistantTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.client.login(username='testuser', password='testpassword')
+        
+        self.goal = Goal.objects.create(
+            user=self.user,
+            name='Save for vacation',
+            target_amount=1000.00,
+            months_to_save=10,
+            amount_saved=100.00
+        )
+
+    def test_chatbot_view_with_goal(self):
+        form_data = {
+            'message': 'How can I save money?',
+            'goal': self.goal.id
+        }
+        response = self.client.post(reverse('chatbot'), form_data)
+        self.assertEqual(response.status_code, 200)
+        print(response)
+
+    def test_chatbot_view_without_goal(self):
+        form_data = {
+            'message': 'How can I save money?'
+        }
+        response = self.client.post(reverse('chatbot'), form_data)
+        self.assertEqual(response.status_code, 200)
+
