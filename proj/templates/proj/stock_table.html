@@ -1,0 +1,161 @@
+{% extends "proj/layout.html" %}
+{% load static %}
+{% block title %}Your Transactions{% endblock %}
+{% block content %}
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Stock Data</title>
+            <link rel="stylesheet"
+                  href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+            <style>
+        .change-positive {
+            color: green;
+        }
+        .change-negative {
+            color: red;
+        }
+        .modal-dialog-centered-custom {
+            display: flex;
+            align-items: center;
+            min-height: calc(100% - 1rem);
+        }
+        .modal-content-custom {
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+            </style>
+        </head>
+        <body>
+            <div class="container mt-5">
+                <h1>Stock Data (Nasdaq only)</h1>
+                <form id="search-form" class="form-inline mb-3">
+                    <input type="text"
+                           name="q"
+                           class="form-control mr-2"
+                           placeholder="Search ticker..."
+                           autocomplete="off">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Price</th>
+                            <th>% Change</th>
+                            <th>High</th>
+                            <th>Low</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stock-data-body">
+                        {% if stock_data %}
+                            {% for symbol, data in stock_data.items %}
+                                <tr>
+                                    <td>{{ symbol }}</td>
+                                    <td>{{ data.price }}</td>
+                                    <td class="{% if data.percent_change >= 0 %}change-positive{% else %}change-negative{% endif %}">
+                                        {{ data.percent_change|floatformat:2 }}%
+                                    </td>
+                                    <td>{{ data.high }}</td>
+                                    <td>{{ data.low }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5">No stock data available.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade"
+                 id="searchResultsModal"
+                 tabindex="-1"
+                 role="dialog"
+                 aria-labelledby="searchResultsModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered-custom"
+                     role="document">
+                    <div class="modal-content modal-content-custom">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="searchResultsModalLabel">Search Results</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Symbol</th>
+                                        <th>Price</th>
+                                        <th>% Change</th>
+                                        <th>High</th>
+                                        <th>Low</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="search-results-body">
+                                    <!-- Results will be inserted here -->
+                                </tbody>
+                            </table>
+                            <div id="search-results-error" class="text-danger"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+            <script>
+        document.getElementById('search-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const query = document.querySelector('input[name="q"]').value;
+
+            fetch(`{% url 'search_stock' %}?q=${query}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const tbody = document.getElementById('search-results-body');
+                    const errorDiv = document.getElementById('search-results-error');
+                    tbody.innerHTML = '';
+                    errorDiv.innerHTML = '';
+
+                    if (data.stock_data.error) {
+                        errorDiv.textContent = data.stock_data.error;
+                    } else if (Object.keys(data.stock_data).length > 0) {
+                        for (const [symbol, stockData] of Object.entries(data.stock_data)) {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${symbol}</td>
+                                <td>${stockData.price}</td>
+                                <td class="${stockData.percent_change >= 0 ? 'change-positive' : 'change-negative'}">
+                                    ${parseFloat(stockData.percent_change).toFixed(2)}%
+                                </td>
+                                <td>${stockData.high}</td>
+                                <td>${stockData.low}</td>
+                            `;
+                            tbody.appendChild(row);
+                        }
+                    } else {
+                        const row = document.createElement('tr');
+                        row.innerHTML = '<td colspan="5">No stock data available.</td>';
+                        tbody.appendChild(row);
+                    }
+
+                    $('#searchResultsModal').modal('show');
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        });
+            </script>
+        </body>
+    </html>
+{% endblock %}

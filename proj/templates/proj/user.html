@@ -11,17 +11,17 @@
             <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
                   rel="stylesheet">
             <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .fade-in {
-            animation: fadeIn 1s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+                body {
+                    font-family: 'Inter', sans-serif;
+                }
+                .fade-in {
+                    animation: fadeIn 1s ease-in-out;
+                }
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
             </style>
         </head>
         <body class="bg-gradient-to-r from-gray-100 to-gray-200 p-6">
@@ -87,7 +87,7 @@
                     </a>
                 </div>
                 <div class="mt-6">
-                    <h2 class="text-2xl font-bold mb-4">Goals - Add financial goals and get advice!</h2>
+                    <h2 class="text-2xl font-bold mb-4">Goals - Add financial goals!</h2>
                     <a href="{% url 'goals_view' %}"
                        class="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition duration-300 inline-block shadow-lg hover:shadow-xl transform hover:-translate-y-1 motion-reduce:transform-none">
                         <svg class="w-5 h-5 inline-block mr-2"
@@ -95,10 +95,24 @@
                              stroke="currentColor"
                              viewBox="0 0 24 24"
                              xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m-2 0h1v-2h1m0 0h1v-2h1m2 4h1v4h1m-2-4h1v-2h-1m0 0h-1v-2h-1">
-                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>
                         Goals Page
+                    </a>
+                </div>
+                <div class="mt-6">
+                    <h2 class="text-2xl font-bold mb-4">Stocks - View financial markets!</h2>
+                    <a href="{% url 'stock_data' %}"
+                       class="bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition duration-300 inline-block shadow-lg hover:shadow-xl transform hover:-translate-y-1 motion-reduce:transform-none">
+                        <svg class="w-5 h-5 inline-block mr-2"
+                             fill="none"
+                             stroke="currentColor"
+                             viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18"></path>
+                        </svg>
+                        Stock Page
                     </a>
                 </div>
             </div>
