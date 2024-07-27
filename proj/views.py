@@ -408,16 +408,24 @@ def chatbot_view(request):
     form = ChatForm(user=user)
     user_message = None
     bot_response = None
+
+    # Retrieve the conversation history from the session
+    conversation_history = request.session.get('conversation_history', [])
+
     if request.method == "POST":
         form = ChatForm(request.POST, user=user)
         if form.is_valid():
             user_message = form.cleaned_data["message"]
             selected_goal = form.cleaned_data.get("goal")
+            chat_mode = form.cleaned_data.get("chat_mode")
+
+            # Clear conversation history if starting a new chat
+            if chat_mode == 'new':
+                conversation_history = []
 
             if selected_goal:
                 prompt = create_financial_advice_prompt(user, selected_goal)
                 prompt += f"Here is the user's message:\n{user_message}"
-
             else:
                 transactions = list(Transaction.objects.filter(user=user).values())
                 inflows = [t for t in transactions if t["type"] == "inflow"]
@@ -435,6 +443,7 @@ def chatbot_view(request):
                 {user_message}
                 Please consider the incomes and expenditures in your response.
                 """
+
             try:
                 client = OpenAI()
                 response = client.chat.completions.create(
@@ -446,14 +455,26 @@ def chatbot_view(request):
                     temperature=0.5,
                 )
                 bot_response = response.choices[0].message.content
+
+                # Update conversation history
+                conversation_history.append({"role": "user", "content": user_message})
+                conversation_history.append({"role": "assistant", "content": bot_response})
+                request.session['conversation_history'] = conversation_history
+
             except Exception as e:
                 bot_response = f"Error: {e}"
 
     return render(
         request,
         "proj/chatbot.html",
-        {"form": form, "user_message": user_message, "bot_response": bot_response},
+        {
+            "form": form,
+            "user_message": user_message,
+            "bot_response": bot_response,
+            "conversation_history": conversation_history,
+        },
     )
+
 
 
 @login_required
