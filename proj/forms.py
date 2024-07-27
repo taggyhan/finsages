@@ -59,12 +59,24 @@ class ChatForm(forms.Form):
             attrs={"class": "form-input bg-white p-2 border border-gray-300 rounded-md"}
         ),
     )
+    CHAT_MODE_CHOICES = [
+        ('new', 'Start a new chat'),
+        ('continue', 'Continue current chat')
+    ]
+    chat_mode = forms.ChoiceField(
+        choices=CHAT_MODE_CHOICES,
+        widget=forms.RadioSelect(
+            attrs={"class": "form-input bg-white p-2 border border-gray-300 rounded-md"}
+        ),
+        initial='continue'
+    )
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)
         super(ChatForm, self).__init__(*args, **kwargs)
         if user:
             self.fields["goal"].queryset = Goal.objects.filter(user=user)
+
 
 class GoalForm(forms.ModelForm):
     class Meta:
