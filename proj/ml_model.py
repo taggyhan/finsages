@@ -1,12 +1,13 @@
 import pickle
 import re
+
 import nltk
+from django.conf import settings
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-from sklearn.feature_extraction.text import (
+from sklearn.feature_extraction.text import (  # Assumed you're using TF-IDF from your description, import if used.
     TfidfVectorizer,
-)  # Assumed you're using TF-IDF from your description, import if used.
-from django.conf import settings
+)
 
 # Make sure you have the nltk data downloaded, which includes stopwords and lemmatization data
 nltk.download("stopwords")

@@ -1,33 +1,32 @@
 {% extends "proj/layout.html" %}
-
 {% block content %}
-<div class="container">
-    <h2>Add Transaction</h2>
-    <form method="post" class="transaction-form">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="id_type" class="form-label">Type:</label>
-            {{ form.type }}
-        </div>
-        <div class="form-group">
-            <label for="amount-input" class="form-label">Amount:</label>
-            {{ form.amount }}
-        </div>
-        <div class="form-group">
-            <label for="id_description" class="form-label">Description (Optional):</label>
-            {{ form.description }}
-        </div>
-        <div class="form-group">
-            <label for="id_date" class="form-label">Date:</label>
-            {{ form.date }}
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <a href="{% url 'index' %}" class="btn btn-secondary btn-link">Back to Home</a>
-        <a href="{% url 'list_transactions' %}" class="btn btn-secondary btn-link">View Transactions</a>
-    </form>
-</div>
-
-<style>
+    <div class="container">
+        <h2>Add Transaction</h2>
+        <form method="post" class="transaction-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_type" class="form-label">Type:</label>
+                {{ form.type }}
+            </div>
+            <div class="form-group">
+                <label for="amount-input" class="form-label">Amount:</label>
+                {{ form.amount }}
+            </div>
+            <div class="form-group">
+                <label for="id_description" class="form-label">Description (Optional):</label>
+                {{ form.description }}
+            </div>
+            <div class="form-group">
+                <label for="id_date" class="form-label">Date:</label>
+                {{ form.date }}
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <a href="{% url 'index' %}" class="btn btn-secondary btn-link">Back to Home</a>
+            <a href="{% url 'list_transactions' %}"
+               class="btn btn-secondary btn-link">View Transactions</a>
+        </form>
+    </div>
+    <style>
     .container {
         max-width: 600px;
         margin: 20px auto;
@@ -94,9 +93,8 @@
         margin-top: 10px;
         display: inline-block;
     }
-</style>
-
-<script>
+    </style>
+    <script>
     document.addEventListener('DOMContentLoaded', function() {
         const amountInput = document.getElementById('amount-input');
 
@@ -123,5 +121,5 @@
             }
         });
     });
-</script>
+    </script>
 {% endblock %}

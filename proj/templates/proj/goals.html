@@ -1,48 +1,52 @@
 {% extends "proj/layout.html" %}
-
 {% block content %}
-<div class="container">
-    <h2>Goals</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Target Amount</th>
-                <th>Months to Save</th>
-                <th>Amount Saved</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for goal in goals %}
-            <tr>
-                <td>{{ goal.name }}</td>
-                <td>{{ goal.target_amount }}</td>
-                <td>{{ goal.months_to_save }}</td>
-                <td>{{ goal.amount_saved }}</td>
-                <td>
-                    <a href="{% url 'update_goal' goal.id %}" class="btn btn-primary btn-sm">Edit</a>
-                    <form method="post" action="{% url 'delete_goal' goal.id %}" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <th><a href="{% url 'add_goal' %}" class="btn btn-success btn-link">Add New Goal</a></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th><a href="{% url 'chatbot' %}" class="btn btn-success btn-link">Get advice</a></th>
-            </tr>
-        </tbody>
-    </table>
-    <!-- <a href="{% url 'add_goal' %}" class="btn btn-success btn-link">Add New Goal</a>
+    <div class="container">
+        <h2>Goals</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Target Amount</th>
+                    <th>Months to Save</th>
+                    <th>Amount Saved</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for goal in goals %}
+                    <tr>
+                        <td>{{ goal.name }}</td>
+                        <td>{{ goal.target_amount }}</td>
+                        <td>{{ goal.months_to_save }}</td>
+                        <td>{{ goal.amount_saved }}</td>
+                        <td>
+                            <a href="{% url 'update_goal' goal.id %}" class="btn btn-primary btn-sm">Edit</a>
+                            <form method="post"
+                                  action="{% url 'delete_goal' goal.id %}"
+                                  style="display:inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <th>
+                        <a href="{% url 'add_goal' %}" class="btn btn-success btn-link">Add New Goal</a>
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th>
+                        <a href="{% url 'chatbot' %}" class="btn btn-success btn-link">Get advice</a>
+                    </th>
+                </tr>
+            </tbody>
+        </table>
+        <!-- <a href="{% url 'add_goal' %}" class="btn btn-success btn-link">Add New Goal</a>
     <a href="{% url 'chatbot' %}" class="btn btn-success btn-link">Get advice</a> -->
-</div>
-
-<style>
+    </div>
+    <style>
     .container {
         max-width: 800px;
         margin: 20px auto;
@@ -109,5 +113,5 @@
         margin-top: 10px;
         display: inline-block;
     }
-</style>
+    </style>
 {% endblock %}

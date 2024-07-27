@@ -1,10 +1,11 @@
-from django.test import TestCase
+from datetime import date
+
+from django.contrib.auth import get_user_model
 
 # Create your tests here.
 from django.test import TestCase
-from django.contrib.auth import get_user_model
-from .models import Asset, Transaction, Goal
-from datetime import date
+
+from .models import Asset, Goal, Transaction
 
 User = get_user_model()
 
@@ -84,12 +85,14 @@ class GoalModelTest(TestCase):
         self.assertEqual(str(goal), "Car - Target: 5000.0 - Saved: 500.0")
 
 
-from django.test import TestCase, Client
-from django.urls import reverse
-from django.contrib.auth import get_user_model
-from .models import Transaction, Goal
-from datetime import datetime, timedelta
 import json
+from datetime import datetime, timedelta
+
+from django.contrib.auth import get_user_model
+from django.test import Client, TestCase
+from django.urls import reverse
+
+from .models import Goal, Transaction
 
 User = get_user_model()
 

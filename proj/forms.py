@@ -1,7 +1,8 @@
+import pytz
 from django import forms
 from django.utils import timezone
-import pytz
-from .models import Transaction, User, Goal
+
+from .models import Goal, Transaction, User
 
 
 class TransactionForm(forms.ModelForm):
