@@ -23,6 +23,8 @@ from .forms import ChatForm, GoalForm, TransactionForm
 from .ml_model import predict_category
 from .models import Goal, Transaction
 
+from decimal import Decimal
+
 User = get_user_model()
 # Your views and logic here
 load_dotenv()
@@ -460,6 +462,8 @@ def goals_view(request):
     return render(request, "proj/goals.html", {"goals": goals})
 
 
+
+
 @login_required
 def add_goal(request):
     if request.method == "POST":
@@ -467,12 +471,12 @@ def add_goal(request):
         if form.is_valid():
             goal = form.save(commit=False)
             goal.user = request.user
+            goal.goal_date = timezone.now().date()
             goal.save()
             return redirect("goals_view")
     else:
         form = GoalForm()
     return render(request, "proj/add_goal.html", {"form": form})
-
 
 @login_required
 def update_goal(request, goal_id):
@@ -486,7 +490,6 @@ def update_goal(request, goal_id):
         form = GoalForm(instance=goal)
     return render(request, "proj/update_goal.html", {"form": form, "goal": goal})
 
-
 @login_required
 @require_POST
 def update_goal_amount(request, goal_id):
@@ -495,6 +498,7 @@ def update_goal_amount(request, goal_id):
     goal.amount_saved += amount
     goal.save()
     return redirect("goals_view")
+
 
 
 @login_required

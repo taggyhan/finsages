@@ -66,14 +66,27 @@ class ChatForm(forms.Form):
         if user:
             self.fields["goal"].queryset = Goal.objects.filter(user=user)
 
-
 class GoalForm(forms.ModelForm):
     class Meta:
         model = Goal
-        fields = ["name", "target_amount", "months_to_save", "amount_saved"]
-        widgets = {
-            "name": forms.TextInput(attrs={"class": "form-input"}),
-            "target_amount": forms.NumberInput(attrs={"class": "form-input"}),
-            "months_to_save": forms.NumberInput(attrs={"class": "form-input"}),
-            "amount_saved": forms.NumberInput(attrs={"class": "form-input"}),
-        }
+        fields = ['name', 'target_amount', 'months_to_save', 'amount_saved']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        target_amount = cleaned_data.get('target_amount')
+        amount_saved = cleaned_data.get('amount_saved')
+        months_to_save = cleaned_data.get('months_to_save')
+        # Ensure target amount is greater than amount saved
+        if target_amount < amount_saved:
+            self.add_error('target_amount', 'Target amount must be greater than amount saved.')
+
+        # Ensure neither target amount nor amount saved are negative
+        if target_amount is not None and amount_saved is not None:
+            if amount_saved < 0:
+                self.add_error('amount_saved', 'Amount Saved cannot be negative.')
+            if target_amount <= 0:
+                self.add_error('target_amount', 'Target Amount must be greater than zero.')
+        
+        if months_to_save is not None and months_to_save <= 0:
+            self.add_error('months_to_save', 'Months to Save must be greater than zero.')
+        return cleaned_data

@@ -1,73 +1,80 @@
 {% extends "proj/layout.html" %}
 {% block content %}
-    <!DOCTYPE html>
-    <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Add Goal</title>
-            <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-                  rel="stylesheet">
-            <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .form-input {
-            display: block;
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            background-color: #f9fafb;
-            transition: border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
-        }
-        .form-input:focus {
-            border-color: #3b82f6;
-            background-color: #fff;
-        }
-            </style>
-        </head>
-        <body class="bg-gray-100 p-6">
-            <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
-                <h2 class="text-3xl font-bold text-blue-600 text-center mb-6">Add Goal</h2>
-                <form method="post" autocomplete="off" class="space-y-4">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="id_name" class="block text-lg font-medium text-gray-700 mb-2">Name:</label>
-                        {{ form.name }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Goal</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <h2 class="text-3xl font-bold text-blue-600 text-center mb-6">Add Goal</h2>
+        <form method="post" autocomplete="off" class="space-y-4">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="text-red-600 text-sm mb-4">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+            <div class="form-group">
+                <label for="id_name" class="block text-lg font-medium text-gray-700 mb-2">Name:</label>
+                <input type="text" name="name" id="id_name" value="{{ form.name.value|default:'' }}" class="block w-full px-3 py-2 border rounded-md shadow-sm border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 {{ form.name.errors|yesno:'border-red-500,' }}" required>
+                {% if form.name.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.name.errors %}
+                            {{ error }}
+                        {% endfor %}
                     </div>
-                    <div class="form-group">
-                        <label for="id_target_amount"
-                               class="block text-lg font-medium text-gray-700 mb-2">Target Amount:</label>
-                        {{ form.target_amount }}
-                    </div>
-                    <div class="form-group">
-                        <label for="id_months_to_save"
-                               class="block text-lg font-medium text-gray-700 mb-2">Months to Save:</label>
-                        {{ form.months_to_save }}
-                    </div>
-                    <div class="form-group">
-                        <label for="id_amount_saved"
-                               class="block text-lg font-medium text-gray-700 mb-2">Amount Saved:</label>
-                        {{ form.amount_saved }}
-                    </div>
-                    <div class="flex space-x-4">
-                        <button type="submit"
-                                class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300">
-                            Add Goal
-                        </button>
-                        <a href="{% url 'index' %}"
-                           class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition duration-300">
-                            Back to Home
-                        </a>
-                        <a href="{% url 'goals_view' %}"
-                           class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition duration-300">
-                            View Goals
-                        </a>
-                    </div>
-                </form>
+                {% endif %}
             </div>
-        </body>
-    {% endblock %}
+            <div class="form-group">
+                <label for="id_target_amount" class="block text-lg font-medium text-gray-700 mb-2">Target Amount:</label>
+                <input type="number" name="target_amount" id="id_target_amount" value="{{ form.target_amount.value|default:'' }}" class="block w-full px-3 py-2 border rounded-md shadow-sm border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 {{ form.target_amount.errors|yesno:'border-red-500,' }}" required>
+                {% if form.target_amount.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.target_amount.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="id_months_to_save" class="block text-lg font-medium text-gray-700 mb-2">Months to Save:</label>
+                <input type="number" name="months_to_save" id="id_months_to_save" value="{{ form.months_to_save.value|default:'' }}" class="block w-full px-3 py-2 border rounded-md shadow-sm border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 {{ form.months_to_save.errors|yesno:'border-red-500,' }}" required>
+                {% if form.months_to_save.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.months_to_save.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="id_amount_saved" class="block text-lg font-medium text-gray-700 mb-2">Amount Saved:</label>
+                <input type="number" name="amount_saved" id="id_amount_saved" value="{{ form.amount_saved.value|default:'' }}" class="block w-full px-3 py-2 border rounded-md shadow-sm border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 {{ form.amount_saved.errors|yesno:'border-red-500,' }}" required>
+                {% if form.amount_saved.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.amount_saved.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="flex space-x-4">
+                <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300">
+                    Add Goal
+                </button>
+                <a href="{% url 'index' %}" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition duration-300">
+                    Back to Home
+                </a>
+                <a href="{% url 'goals_view' %}" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition duration-300">
+                    View Goals
+                </a>
+            </div>
+        </form>
+    </div>
+</body>
+{% endblock %}
 </html>
