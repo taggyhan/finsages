@@ -7,6 +7,7 @@ import openai
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import IntegrityError
 from django.db.models import Count, Q, Sum
 from django.db.models.functions import TruncMonth
@@ -18,6 +19,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from dotenv import load_dotenv
 from openai import OpenAI
+from slugify import slugify
 
 from .forms import ChatForm, GoalForm, TransactionForm
 from .ml_model import predict_category
@@ -513,10 +515,30 @@ def transactions_by_category(request):
     # Group transactions by category
     detailed_transactions = {}
     for transaction in user_transactions:
-        if transaction.category not in detailed_transactions:
-            detailed_transactions[transaction.category] = []
-        detailed_transactions[transaction.category].append(transaction)
+        category = (
+            transaction.category or "unknown"
+        )  # Default to "unknown" if category is None
+        if category not in detailed_transactions:
+            detailed_transactions[category] = []
+        detailed_transactions[category].append(
+            {
+                "description": transaction.description,
+                "amount": float(transaction.amount),  # Ensure it's serializable
+                "date": transaction.date.isoformat(),  # Ensure date is in ISO format
+            }
+        )
 
-    context = {"detailed_transactions": detailed_transactions}
+    # Slugify the keys for JavaScript compatibility
+    detailed_transactions_slugified = {
+        slugify(category): transactions
+        for category, transactions in detailed_transactions.items()
+    }
+
+    context = {
+        "detailed_transactions": detailed_transactions,
+        "detailed_transactions_json": json.dumps(
+            detailed_transactions_slugified, cls=DjangoJSONEncoder
+        ),
+    }
 
     return render(request, "proj/transactions_by_category.html", context)
