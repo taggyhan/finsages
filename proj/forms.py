@@ -66,10 +66,6 @@ class ChatForm(forms.Form):
         if user:
             self.fields["goal"].queryset = Goal.objects.filter(user=user)
 
-
-from django import forms
-from .models import Goal
-
 class GoalForm(forms.ModelForm):
     class Meta:
         model = Goal
@@ -85,10 +81,12 @@ class GoalForm(forms.ModelForm):
             self.add_error('target_amount', 'Target amount must be greater than amount saved.')
 
         # Ensure neither target amount nor amount saved are negative
-        if target_amount < 0:
-            self.add_error('target_amount', 'Target amount must be non-negative.')
-        if amount_saved < 0:
-            self.add_error('amount_saved', 'Amount saved must be non-negative.')
-        if months_to_save < 0:
-            self.add_error('months_to_save', 'Months to save must be non-negative.')
+        if target_amount is not None and amount_saved is not None:
+            if amount_saved < 0:
+                self.add_error('amount_saved', 'Amount Saved cannot be negative.')
+            if target_amount <= 0:
+                self.add_error('target_amount', 'Target Amount must be greater than zero.')
+        
+        if months_to_save is not None and months_to_save <= 0:
+            self.add_error('months_to_save', 'Months to Save must be greater than zero.')
         return cleaned_data

@@ -2,6 +2,8 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from django.utils import timezone
+
 # Dictionary mapping ISO country codes to time zones
 COUNTRY_TO_TIMEZONE = {
     "US": "America/New_York",  # United States
@@ -82,9 +84,7 @@ class Transaction(models.Model):
         return f"{self.type} transaction of {self.amount} in category '{self.category}' on {self.date}"
 
 
-from django.db import models
-from django.conf import settings
-from django.utils import timezone
+
 
 class Goal(models.Model):
     user = models.ForeignKey(

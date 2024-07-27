@@ -23,6 +23,8 @@ from .forms import ChatForm, GoalForm, TransactionForm
 from .ml_model import predict_category
 from .models import Goal, Transaction
 
+from decimal import Decimal
+
 User = get_user_model()
 # Your views and logic here
 load_dotenv()
@@ -460,13 +462,7 @@ def goals_view(request):
     return render(request, "proj/goals.html", {"goals": goals})
 
 
-from django.shortcuts import render, redirect
-from django.utils import timezone
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
-from .forms import GoalForm
-from .models import Goal
-from decimal import Decimal
+
 
 @login_required
 def add_goal(request):
