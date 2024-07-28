@@ -56,7 +56,7 @@ COUNTRY_TO_CURRENCY_SYMBOL = {
     "GB": "£",  # United Kingdom
     "JP": "¥",  # Japan
     "BR": "R$",  # Brazil
-    "SG": "$",  # Singapore
+    "SG": "SGD",  # Singapore
 }
 
 
