@@ -36,4 +36,6 @@ urlpatterns = [
         views.transactions_by_category,
         name="transactions_by_category",
     ),
+    path("stocks/", views.stock_data, name="stock_data"),
+    path("stocks/search/", views.search_stock, name="search_stock"),
 ]

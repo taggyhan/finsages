@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 
 import openai
+import requests
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
@@ -567,3 +568,67 @@ def transactions_by_category(request):
     }
 
     return render(request, "proj/transactions_by_category.html", context)
+
+
+API_KEY = os.getenv("NASDAQ_API_KEY")
+BASE_URL = "https://data.nasdaq.com/api/v3/datasets/WIKI/"
+
+
+def fetch_stock_data(symbol):
+    url = f"{BASE_URL}{symbol}.json"
+    params = {
+        "api_key": API_KEY,
+    }
+    response = requests.get(url, params=params)
+    response_data = response.json()
+    print(f"API Response for {symbol}: {response_data}")  # Print the API response
+    return response_data
+
+
+def stock_data(request):
+    symbols = ["AAPL", "GOOGL", "PEP", "NVDA"]
+    stock_data = {}
+
+    for symbol in symbols:
+        data = fetch_stock_data(symbol)
+        dataset = data.get("dataset", {})
+        if dataset:
+            latest_data = dataset["data"][0]
+            previous_data = dataset["data"][1]
+            percent_change = (
+                (latest_data[4] - previous_data[4]) / previous_data[4]
+            ) * 100
+            stock_data[symbol] = {
+                "price": latest_data[4],  # Close price
+                "percent_change": percent_change,
+                "high": latest_data[2],
+                "low": latest_data[3],
+            }
+
+    context = {"stock_data": stock_data}
+    return render(request, "proj/stock_table.html", context)
+
+
+def search_stock(request):
+    query = request.GET.get("q")
+    stock_data = {}
+
+    if query:
+        data = fetch_stock_data(query.upper())
+        dataset = data.get("dataset", {})
+        if dataset:
+            latest_data = dataset["data"][0]
+            previous_data = dataset["data"][1]
+            percent_change = (
+                (latest_data[4] - previous_data[4]) / previous_data[4]
+            ) * 100
+            stock_data[query.upper()] = {
+                "price": latest_data[4],
+                "percent_change": percent_change,
+                "high": latest_data[2],
+                "low": latest_data[3],
+            }
+        else:
+            stock_data["error"] = f'Ticker "{query.upper()}" does not exist on Nasdaq.'
+
+    return JsonResponse({"stock_data": stock_data})
