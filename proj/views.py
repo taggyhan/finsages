@@ -536,8 +536,7 @@ def delete_goal(request, goal_id):
 @login_required
 def transactions_by_category(request):
     # Fetch all transactions for the logged-in user
-    user_transactions = Transaction.objects.filter(user=request.user)
-
+    user_transactions = Transaction.objects.filter(user=request.user, type='outflow')
     # Group transactions by category
     detailed_transactions = {}
     for transaction in user_transactions:
