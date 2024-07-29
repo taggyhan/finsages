@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 build_files.sh
 .env
+generate_requirements.py
