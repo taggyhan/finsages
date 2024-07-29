@@ -510,8 +510,9 @@ def delete_goal(request, goal_id):
 
 @login_required
 def transactions_by_category(request):
-    # Fetch all transactions for the logged-in user
-    user_transactions = Transaction.objects.filter(user=request.user)
+    # Ensure transaction_type is either 'inflow' or 'outflow'
+    # Fetch all transactions for the logged-in user with the specified type
+    user_transactions = Transaction.objects.filter(user=request.user, type='outflow')
 
     # Group transactions by category
     detailed_transactions = {}
@@ -543,7 +544,6 @@ def transactions_by_category(request):
     }
 
     return render(request, "proj/transactions_by_category.html", context)
-
 
 API_KEY = os.getenv("NASDAQ_API_KEY")
 BASE_URL = "https://data.nasdaq.com/api/v3/datasets/WIKI/"
